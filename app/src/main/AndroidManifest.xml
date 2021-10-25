@@ -82,6 +82,7 @@
             android:name=".Driver.SignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+
         <activity
             android:name=".User.PromoCodeScreen"
             android:screenOrientation="portrait"
