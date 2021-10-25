@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:background="@color/white"
+    >
+
+    <RelativeLayout
+        android:background="@mipmap/blackout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <ImageView
+            android:id="@+id/imgCross"
+            android:src="@drawable/cross_icon"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            >
+        </ImageView>
+
+        <com.skyfishjy.library.RippleBackground
+            android:id="@+id/ripple"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:shadowColor="@color/white"
+            app:rb_color="@color/white"
+            app:rb_duration="4000"
+            android:layout_marginBottom="@dimen/_80sdp"
+            app:rb_radius="50dp"
+            app:rb_rippleAmount="4"
+            app:rb_scale="6">
+
+            <ImageView
+                android:layout_centerInParent="true"
+                android:src="@drawable/buldozer"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                >
+
+            </ImageView>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="00.01"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_25sdp"
+                android:textStyle="bold" />
+
+        </com.skyfishjy.library.RippleBackground>
+
+
+
+        <TextView
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Searching for a driver"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

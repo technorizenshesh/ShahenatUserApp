@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+
+    <LinearLayout
+        android:id="@+id/llPard"
+        android:padding="@dimen/_10sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/border_yellow_new"
+        android:orientation="vertical"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/img"
+            android:src="@drawable/buldozer"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            >
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bulldozer"
+            android:textColor="@color/gra"
+            android:textSize="@dimen/_12sdp"
+            />
+
+        <TextView
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:drawablePadding="@dimen/_5sdp"
+            android:drawableLeft="@drawable/doloer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="70.00"
+            android:textColor="@color/black_new"
+            android:textSize="@dimen/_12sdp"
+            />
+
+        <TextView
+            android:gravity="center"
+            android:paddingBottom="@dimen/_5sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingRight="@dimen/_7sdp"
+            android:paddingLeft="@dimen/_7sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/btn_bg_yellow_20"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 min"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            />
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:padding="@dimen/_10sdp"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/btn_bg_gray"
+                android:orientation="vertical"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="wrap_content"
+                >
+
+                <ImageView
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/box_truck"
+                    android:layout_gravity="center"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    >
+
+                </ImageView>
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bulldozer"
+                    android:textColor="@color/gra"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+                <TextView
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:drawableLeft="@drawable/doloer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="70.00"
+                    android:textColor="@color/black_new"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+                <TextView
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_7sdp"
+                    android:paddingLeft="@dimen/_7sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/btn_bg_yellow_20"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3 min"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:padding="@dimen/_10sdp"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/btn_bg_gray"
+                android:orientation="vertical"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="wrap_content"
+                >
+
+                <ImageView
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/box_truck"
+                    android:layout_gravity="center"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    >
+
+                </ImageView>
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bulldozer"
+                    android:textColor="@color/gra"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+                <TextView
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:drawablePadding="@dimen/_5sdp"
+                    android:drawableLeft="@drawable/doloer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="70.00"
+                    android:textColor="@color/black_new"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+                <TextView
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_7sdp"
+                    android:paddingLeft="@dimen/_7sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/btn_bg_yellow_20"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3 min"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</LinearLayout>

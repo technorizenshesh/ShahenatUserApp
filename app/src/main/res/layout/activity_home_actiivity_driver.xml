@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".act.MapsActivity"
+            />
+
+        <ImageView
+            android:id="@+id/imgDrawer"
+            android:scaleType="fitXY"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/nav_icon"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            >
+        </ImageView>
+
+        <RelativeLayout
+            android:id="@+id/RRAccept"
+            android:background="@drawable/btn_bg_yellow_10"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/_3sdp"
+            android:layout_margin="@dimen/_10sdp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/img_User"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_centerVertical="true"
+                app:cardCornerRadius="@dimen/_360sdp"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                >
+                <ImageView
+                    android:src="@drawable/user"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp">
+                </ImageView>
+
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_toRightOf="@+id/img_User"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Driver David"
+                    android:textColor="@color/black_new"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A257GHSY"
+                    android:textColor="@color/gra"
+                    android:textSize="@dimen/_12sdp" />
+
+            </LinearLayout>
+
+            <Switch
+                android:padding="@dimen/_10sdp"
+                android:text="Online"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+            </Switch>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</layout>

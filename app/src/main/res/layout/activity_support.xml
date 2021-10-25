@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <RelativeLayout
+            android:id="@+id/RRtoolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp"
+            >
+
+            <ImageView
+                android:id="@+id/Imgback"
+                android:layout_margin="@dimen/_5sdp"
+                android:src="@drawable/arw_left"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                >
+            </ImageView>
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/support"
+                android:textColor="@color/black_new"
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:padding="@dimen/_10sdp"
+            android:layout_below="@+id/RRtoolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Varius viverra eu id amet velit. Nisl nisl, at commodo, a commodo vitae maecenas enim ornare. Elit morbi in phasellus sed praesent lacus arcu quis. Purus tellus in nunc hendrerit mauris diam, vel lectus gravida. Porttitor urna nisl scelerisque sit. Quis nisi, mattis risus bibendum consectetur vel. Vestibulum, nec volutpat viverra sed sed sit id id. Augue vitae tincidunt egestas pretium enim, dui. Tincidunt sagittis nibh feugiat tellus risus, consequat habitasse. Mi sed vestibulum in est sit nunc non sed."
+            android:textColor="@color/black_new"
+            android:textSize="@dimen/_16sdp"
+            />
+
+
+
+    </RelativeLayout>
+
+</layout>

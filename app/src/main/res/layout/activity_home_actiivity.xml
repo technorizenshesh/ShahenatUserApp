@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".act.MapsActivity"
+            />
+
+        <ImageView
+            android:id="@+id/imgDrawer"
+            android:scaleType="fitXY"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/nav_icon"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            >
+        </ImageView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_marginRight="@dimen/_20sdp"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_below="@id/imgDrawer"
+            app:cardCornerRadius="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <RelativeLayout
+                android:padding="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:id="@+id/imgLocation"
+                    android:src="@drawable/location_bar"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    >
+
+                </ImageView>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_toRightOf="@+id/imgLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:maxLines="2"
+                        android:id="@+id/tvPickUp"
+                        android:textColor="@color/gra"
+                        android:textSize="@dimen/_13sdp"
+                        android:text="1 Ash Park, Pembroke Dock, SA7254, Drury Lane, Oldham, OL9 7PH"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <View
+                        android:background="@color/gray_light"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1sp">
+
+                    </View>
+
+                    <TextView
+                        android:gravity="left"
+                        android:maxLines="2"
+                        android:id="@+id/tvDropUp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:textColor="@color/gra"
+                        android:textSize="@dimen/_13sdp"
+                        android:hint="Drop Location"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_30sdp">
+
+                    </TextView>
+
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/_3sdp"
+            android:layout_margin="@dimen/_20sdp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/RRSchedule"
+                android:padding="@dimen/_10sdp"
+                android:background="@drawable/btn_border_yellow"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                >
+
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@color/purple_200"
+                    android:textSize="@dimen/_16sdp"
+                    android:gravity="center"
+                    android:text="@string/schedule_ride"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/RRNext"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_10sdp"
+                android:background="@drawable/btn_bg_yellow_20"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                >
+
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16sdp"
+                    android:gravity="center"
+                    android:text="@string/next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</layout>
