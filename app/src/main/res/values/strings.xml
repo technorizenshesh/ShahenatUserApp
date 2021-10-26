@@ -73,7 +73,10 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="home_address">Home Address</string>
-    <string name="terms">By continuing, I confirm that I have read and agree to the <u>Terms and Conditions</u> and <u> Privacy Policy </u>.</string>
+    <string name="terms2">the <u>Terms and Conditions</u></string>
+    <string name="terms3">and <u> Privacy Policy </u>.</string>
+
+    <string name="terms1">By continuing, I confirm that I have read and agree to</string>
     <string name="purchase_plan">Purchase Plan</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
@@ -94,6 +97,7 @@
     <string name="_25_40_trips">$25/ 40 Trips</string>
     <string name="_50_90_trips">$25/ 40 Trips</string>
     <string name="_100_120_trips">$25/ 40 Trips</string>
+    <string name="equipments">Equipments</string>
 
 
 </resources>

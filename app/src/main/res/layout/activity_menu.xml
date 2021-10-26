@@ -24,12 +24,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:src="@drawable/user"
-                    android:layout_width="@dimen/_60sdp"
-                    android:layout_height="@dimen/_60sdp">
+                <androidx.cardview.widget.CardView
+                    app:cardCornerRadius="@dimen/_360sdp"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    >
+                    <ImageView
+                        android:id="@+id/imgUser"
+                        android:src="@drawable/user"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        >
+                    </ImageView>
+                </androidx.cardview.widget.CardView>
 
-                </ImageView>
 
                 <TextView
                     android:id="@+id/txtUserName"

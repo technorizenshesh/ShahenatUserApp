@@ -8,6 +8,21 @@
         android:layout_height="match_parent"
         >
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/progresh_background"
+            android:elevation="6dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/purple_200"
+            android:indeterminateTintMode="src_atop"
+            android:padding="5dp"
+            android:visibility="gone"
+            />
+
+
         <RelativeLayout
             android:id="@+id/RRtoolbar"
             android:layout_width="match_parent"
@@ -68,36 +83,32 @@
 
                 <RelativeLayout
                     android:elevation="@dimen/_3sdp"
-                    android:id="@+id/RRSelectType"
+                    android:id="@+id/RRSubCategory"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/edt_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_45sdp"
-                    >
+                    android:layout_height="@dimen/_45sdp">
 
-                    <TextView
-                        android:layout_marginLeft="@dimen/_10sdp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Truck"
-                        android:textColor="@color/black_new"
-                        android:textSize="@dimen/_12sdp"
-                     />
+                    <Spinner
+                        android:id="@+id/spinnerCatgory"
+                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toLeftOf="@+id/img_arcnty"
+                        android:background="@android:color/transparent"
+                        android:backgroundTint="@color/black_new"
+                        android:visibility="visible" />
 
                     <ImageView
-                        android:src="@drawable/arw_btm"
-                        android:layout_marginRight="@dimen/_10sdp"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
+                        android:id="@+id/img_arcnty"
                         android:layout_width="@dimen/_10sdp"
-                        android:layout_height="@dimen/_15sdp"
-                        >
-
-                    </ImageView>
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:src="@drawable/arw_btm" />
 
                 </RelativeLayout>
 
@@ -206,8 +217,8 @@
                         android:textSize="@dimen/_12sdp"
                         />
 
-
                 </RelativeLayout>
+
 
 
                 <TextView
@@ -216,7 +227,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/no_of_vehicles"
+                    android:hint="Pick Up Address"
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp" />
@@ -232,11 +243,9 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_45sdp"
-                    android:hint="00"
-                    android:inputType="number"
+                    android:hint="Enter Address"
+                    android:inputType="text"
                     android:textColor="@color/black_new" />
-
-
 
                 <TextView
                     android:layout_marginRight="@dimen/_10sdp"
@@ -244,7 +253,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/address"
+                    android:hint="Drop Address"
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp" />
@@ -282,7 +291,7 @@
                     android:elevation="@dimen/_5sdp"
                     android:gravity="center"
                     android:padding="@dimen/_12sdp"
-                    android:text="@string/schedule_ride"
+                    android:hint="@string/schedule_ride"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"

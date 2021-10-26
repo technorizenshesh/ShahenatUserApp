@@ -19,15 +19,19 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.shahenatuserapp.ChosseLoginActivity;
+import com.shahenatuserapp.Driver.SignUpActivityDriver;
 import com.shahenatuserapp.GPSTracker;
 import com.shahenatuserapp.Preference;
+import com.shahenatuserapp.PrivacyPolicy;
 import com.shahenatuserapp.R;
+import com.shahenatuserapp.TermsCondition;
 import com.shahenatuserapp.User.model.LoginModel;
 import com.shahenatuserapp.databinding.ActivitySignUpBinding;
 import com.shahenatuserapp.utils.FileUtil;
@@ -70,17 +74,21 @@ public class SignUpActivityUser extends AppCompatActivity {
     String longitude="";
     GPSTracker gpsTracker;
 
-
     boolean isProfileImage=false;
-
     private SessionManager sessionManager;
 
+    String token="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding= DataBindingUtil.setContentView(this,R.layout.activity_sign_up);
 
         sessionManager = new SessionManager(SignUpActivityUser.this);
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(runnable -> {
+            token = runnable.getToken();
+            Log.e( "Tokennnn" ,token);
+        });
 
        binding.Imgback.setOnClickListener(v -> {
            onBackPressed();
@@ -96,6 +104,18 @@ public class SignUpActivityUser extends AppCompatActivity {
            Validation();
 
        });
+
+        binding.txtTerms.setOnClickListener(v -> {
+
+            startActivity(new Intent(SignUpActivityUser.this, TermsCondition.class));
+
+        });
+
+        binding.txtPrivacyPolicy.setOnClickListener(v -> {
+
+            startActivity(new Intent(SignUpActivityUser.this, PrivacyPolicy.class));
+
+        });
 
        binding.RRUserImg.setOnClickListener(v -> {
 
@@ -295,7 +315,7 @@ public class SignUpActivityUser extends AppCompatActivity {
         RequestBody Type = RequestBody.create(MediaType.parse("text/plain"), "USER");
         RequestBody Lat = RequestBody.create(MediaType.parse("text/plain"), "75.00");
         RequestBody Long = RequestBody.create(MediaType.parse("text/plain"), "75.00");
-        RequestBody Register_id = RequestBody.create(MediaType.parse("text/plain"), "dbnbcn");
+        RequestBody Register_id = RequestBody.create(MediaType.parse("text/plain"), token);
 
         Call<LoginModel> call = RetrofitClients
                 .getInstance()
@@ -319,6 +339,7 @@ public class SignUpActivityUser extends AppCompatActivity {
 
                     Preference.save(SignUpActivityUser.this,Preference.KEY_User_name,finallyPr.result.firstName);
                     Preference.save(SignUpActivityUser.this,Preference.KEY_User_email,finallyPr.result.email);
+                    Preference.save(SignUpActivityUser.this,Preference.KEY_USer_img,finallyPr.result.image);
 
                     startActivity(new Intent(SignUpActivityUser.this,VerificationActivity.class));
                     finish();

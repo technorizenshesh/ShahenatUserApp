@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/progresh_background"
+            android:elevation="6dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/purple_200"
+            android:indeterminateTintMode="src_atop"
+            android:padding="5dp"
+            android:visibility="gone"
+        />
 
         <ImageView
             android:id="@+id/Imgback"
@@ -35,6 +51,7 @@
                 >
 
                 <RelativeLayout
+                    android:id="@+id/RRADDImg"
                     android:background="@drawable/edt_bg_one"
                     android:layout_margin="@dimen/_20sdp"
                     android:orientation="vertical"
@@ -42,7 +59,28 @@
                     android:layout_height="@dimen/_120sdp"
                     >
 
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/CardEquimentImg"
+                        android:visibility="gone"
+                        android:layout_margin="@dimen/_10sdp"
+                        app:cardCornerRadius="@dimen/_5sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+
+                        <ImageView
+                            android:id="@+id/vDriverImg"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/truck_img"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            ></ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+
                     <RelativeLayout
+                        android:id="@+id/RRAddEuimentImg"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
@@ -81,7 +119,7 @@
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10sdp"
-                    android:text="Equipments"
+                    android:text="@string/equipments"
                     android:textColor="@color/gray_new"
                     android:textSize="@dimen/_12sdp"
                     android:textStyle="bold" />
@@ -94,32 +132,28 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/edt_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_45sdp"
-                    >
+                    android:layout_height="@dimen/_45sdp">
 
-                    <TextView
-                        android:layout_marginLeft="@dimen/_10sdp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sheol"
-                        android:textColor="@color/black_new"
-                        android:textSize="@dimen/_12sdp"
-                        />
+                    <Spinner
+                        android:id="@+id/spinnerCatgory"
+                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toLeftOf="@+id/img_arcnty"
+                        android:background="@android:color/transparent"
+                        android:backgroundTint="@color/black_new"
+                        android:visibility="visible" />
 
                     <ImageView
-                        android:src="@drawable/arw_btm"
-                        android:layout_marginRight="@dimen/_10sdp"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
+                        android:id="@+id/img_arcnty"
                         android:layout_width="@dimen/_10sdp"
-                        android:layout_height="@dimen/_15sdp"
-                        >
-                    </ImageView>
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:src="@drawable/arw_btm" />
 
                 </RelativeLayout>
-
 
                 <TextView
                     android:layout_marginRight="@dimen/_10sdp"
@@ -133,7 +167,7 @@
                     android:textSize="@dimen/_12sdp" />
 
                 <EditText
-                    android:id="@+id/edtProName"
+                    android:id="@+id/equipmentName"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:elevation="@dimen/_3sdp"
@@ -153,7 +187,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Manufacturer (Auto Suggestion)"
+                    android:text="Manufacturer"
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp" />
@@ -179,7 +213,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Model (Auto Suggestion)"
+                    android:text="Model "
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp" />
@@ -335,7 +369,6 @@
 
 
                 <TextView
-
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_10sdp"
@@ -347,6 +380,7 @@
                     android:textSize="@dimen/_12sdp" />
 
                 <EditText
+                    android:id="@+id/edtDescription"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:elevation="@dimen/_3sdp"

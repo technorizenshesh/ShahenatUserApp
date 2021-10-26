@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.shahenatuserapp.ChosseLoginActivity;
 import com.shahenatuserapp.GPSTracker;
+import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
 import com.shahenatuserapp.User.ArrivingActivity;
 import com.shahenatuserapp.User.HomeActiivity;
@@ -56,6 +58,18 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
         binding= DataBindingUtil.setContentView(this,R.layout.activity_home_driver);
 
         activity=HomeActivityDriver.this;
+
+        String  UserName = Preference.get(HomeActivityDriver.this,Preference.KEY_User_name);
+        String  Email =Preference.get(HomeActivityDriver.this,Preference.KEY_User_email);
+        String  UserImg =Preference.get(HomeActivityDriver.this,Preference.KEY_USer_img);
+
+        binding.childNavDrawer.txtUserName.setText(UserName);
+        binding.childNavDrawer.txtUserEmail.setText(Email);
+
+        if(!UserImg.equalsIgnoreCase(""))
+        {
+            Glide.with(this).load(UserImg).into(binding.childNavDrawer.imgUser);
+        }
 
         setUp();
     }
@@ -86,9 +100,8 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
         });
 
         binding.childNavDrawer.RRSignOut.setOnClickListener(v -> {
-
             navmenu();
-
+            Preference.clearPreference(this);
             startActivity(new Intent(HomeActivityDriver.this, ChosseLoginActivity.class));
 
         });

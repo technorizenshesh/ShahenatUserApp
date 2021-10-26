@@ -14,7 +14,7 @@ public static SharedPreferences sp;
 public static String KEY_USER_ID = "user_id";
 public static String KEY_User_name= "User_name";
 public static String KEY_User_email = "User_email";
-public static String KEY_check_status = "check_status";
+public static String KEY_USer_img = "User_img";
 public static String KEY_UserName = "user_name";
 public static String KEY_Login_type = "login_type";
 public static String KEY_battery = "batery";

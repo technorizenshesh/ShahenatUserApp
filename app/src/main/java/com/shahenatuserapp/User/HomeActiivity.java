@@ -11,14 +11,17 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +32,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -42,8 +46,17 @@ import com.shahenatuserapp.R;
 import com.shahenatuserapp.databinding.ActivityHomeActiivityBinding;
 import com.shahenatuserapp.databinding.ActivityHomeNavBinding;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -77,9 +90,15 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
 
         String  UserName =Preference.get(HomeActiivity.this,Preference.KEY_User_name);
         String  Email =Preference.get(HomeActiivity.this,Preference.KEY_User_email);
+        String  UserImg =Preference.get(HomeActiivity.this,Preference.KEY_USer_img);
 
         binding.childNavDrawer.txtUserName.setText(UserName);
         binding.childNavDrawer.txtUserEmail.setText(Email);
+
+        if(!UserImg.equalsIgnoreCase(""))
+        {
+            Glide.with(this).load(UserImg).into(binding.childNavDrawer.imgUser);
+        }
 
         if (!Places.isInitialized()) {
             Places.initialize(HomeActiivity.this, getString(R.string.place_api_key));
@@ -163,6 +182,7 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
 
         binding.childNavDrawer.RRSignOut.setOnClickListener(v -> {
             navmenu();
+            Preference.clearPreference(this);
             startActivity(new Intent(HomeActiivity.this, ChosseLoginActivity.class));
             finish();
 
@@ -281,9 +301,11 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
                     PicUp_latitude = place.getLatLng().latitude;
                     PicUp_longitude = place.getLatLng().longitude;
                     mMap.clear();
+
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(PicUp_latitude, PicUp_longitude))
                             .title("Marker in Location"));
+
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(PicUp_latitude, PicUp_longitude))));
 
                 } catch (Exception e) {
@@ -295,6 +317,7 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
                 // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
             }
+
         }else if (requestCode == AUTOCOMPLETE_REQUEST_CODE_ADDRESS1) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
@@ -309,7 +332,8 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Droplatitude, Droplongitude))
                             .title("Marker in Location"));
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(Droplatitude, Droplongitude))));
+
+                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(Droplatitude, Droplongitude))));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -350,6 +374,5 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
         return addressStreet;
     }
 
-
-
 }
+

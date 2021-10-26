@@ -19,12 +19,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.shahenatuserapp.ChosseLoginActivity;
 import com.shahenatuserapp.Driver.HomeActivityDriver;
-import com.shahenatuserapp.Driver.SignUpActivity;
+import com.shahenatuserapp.Driver.SignUpActivityDriver;
 import com.shahenatuserapp.GPSTracker;
 import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
@@ -33,6 +37,9 @@ import com.shahenatuserapp.databinding.ActivityLogin2Binding;
 import com.shahenatuserapp.utils.RetrofitClients;
 import com.shahenatuserapp.utils.SessionManager;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,6 +67,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     String token="";
     String Type="";
 
+    String Socilal_FirstName="";
+    String Socilal_last_name="";
+    String Socilal_email="";
+    String Socilal_mobile="";
+    String Socilal_city="";
+    String Socilal_address="";
+    String Socilal_address2="";
+    String Socilal_type="";
+    String social_id="";
+    String social_image="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +85,18 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
          Type= Preference.get(LoginActivity.this,Preference.KEY_Login_type);
 
+        if(Type.equalsIgnoreCase("Driver"))
+        {
+             binding.llSocialLogin.setVisibility(View.GONE);
+             binding.txtSocila.setVisibility(View.GONE);
+
+        }else
+        {
+            binding.llSocialLogin.setVisibility(View.VISIBLE);
+            binding.txtSocila.setVisibility(View.VISIBLE);
+        }
+
+        binding.txtLogin.setText(Type+" Login");
 
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(runnable -> {
             token = runnable.getToken();
@@ -125,11 +155,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         binding.llsingUp.setOnClickListener(v -> {
 
-            String Type= Preference.get(LoginActivity.this,Preference.KEY_Login_type);
-
             if(Type.equalsIgnoreCase("Driver"))
             {
-                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                startActivity(new Intent(LoginActivity.this, SignUpActivityDriver.class));
 
             }else
             {
@@ -141,7 +169,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
             if(Type.equalsIgnoreCase("Driver"))
             {
-                startActivity(new Intent(LoginActivity.this, HomeActivityDriver.class));
+                Validation();
+
             }else
             {
                 Validation();
@@ -170,22 +199,30 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
+
             GoogleSignInAccount account = result.getSignInAccount();
 
-            String UsernAME=account.getDisplayName();
-            String email=account.getEmail();
-            String SocialId=account.getId();
-            Uri Url=account.getPhotoUrl();
+             Socilal_FirstName=account.getDisplayName();
+             Socilal_last_name="";
+             Socilal_email=account.getEmail();
+             Socilal_mobile="";
+             Socilal_city="";
+             Socilal_address="";
+             Socilal_address2="";
+             Socilal_type="";
+             social_id=account.getId();
 
-            Preference.save(LoginActivity.this,Preference.KEY_User_name,UsernAME);
-            Preference.save(LoginActivity.this,Preference.KEY_User_email,email);
+             social_image= String.valueOf(account.getPhotoUrl());
 
-            if(Type.equalsIgnoreCase("Driver"))
-            {
-                startActivity(new Intent(LoginActivity.this, HomeActivityDriver.class));
-            }else
-            {
-                startActivity(new Intent(LoginActivity.this, HomeActiivity.class));
+            if (sessionManager.isNetworkAvailable()) {
+
+                binding.progressBar.setVisibility(View.VISIBLE);
+
+                ApISignUpMehod("USER");
+
+            }else {
+
+                Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
             }
 
         } else {
@@ -226,7 +263,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void loginMethod(){
 
         Call<LoginModel> call = RetrofitClients.getInstance().getApi()
-                .login(Email,Password,latitude,longitude,"hgvgbn b");
+                .login(Email,Password,latitude,longitude,token);
         call.enqueue(new Callback<LoginModel>() {
             @Override
             public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -246,12 +283,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                         Preference.save(LoginActivity.this,Preference.KEY_User_name,finallyPr.result.firstName);
                         Preference.save(LoginActivity.this,Preference.KEY_User_email,finallyPr.result.email);
+                        Preference.save(LoginActivity.this,Preference.KEY_USer_img,finallyPr.result.image);
 
 
                         startActivity(new Intent(LoginActivity.this, HomeActiivity.class));
 
                     }else
                     {
+                        Preference.save(LoginActivity.this,Preference.KEY_User_name,finallyPr.result.firstName);
+                        Preference.save(LoginActivity.this,Preference.KEY_User_email,finallyPr.result.email);
+                        Preference.save(LoginActivity.this,Preference.KEY_USer_img,finallyPr.result.image);
+
                         startActivity(new Intent(LoginActivity.this, HomeActivityDriver.class));
                     }
 
@@ -268,9 +310,66 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         });
     }
 
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
 
+
+
+    private void ApISignUpMehod(String LoginType){
+
+        Call<LoginModel> call = RetrofitClients
+                .getInstance()
+                .getApi()
+                .social_login(Socilal_FirstName,Socilal_last_name,Socilal_email,Socilal_mobile,Socilal_city,Socilal_address,Socilal_address2,token,latitude,longitude,LoginType,social_id,social_image);
+        call.enqueue(new Callback<LoginModel>() {
+            @Override
+            public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
+
+                binding.progressBar.setVisibility(View.GONE);
+
+                LoginModel finallyPr = response.body();
+
+                String status = finallyPr.status;
+
+                if (status.equalsIgnoreCase("1")) {
+
+                    Preference.save(LoginActivity.this,Preference.KEY_USER_ID,finallyPr.result.id);
+
+                    if(finallyPr.result.type.equalsIgnoreCase("USER"))
+                    {
+
+                        Preference.save(LoginActivity.this,Preference.KEY_User_name,finallyPr.result.firstName);
+                        Preference.save(LoginActivity.this,Preference.KEY_User_email,finallyPr.result.email);
+                        Preference.save(LoginActivity.this,Preference.KEY_USer_img,finallyPr.result.image);
+
+
+                        startActivity(new Intent(LoginActivity.this, HomeActiivity.class));
+
+                    }else
+                    {
+                        Preference.save(LoginActivity.this,Preference.KEY_User_name,finallyPr.result.firstName);
+                        Preference.save(LoginActivity.this,Preference.KEY_User_email,finallyPr.result.email);
+                        Preference.save(LoginActivity.this,Preference.KEY_USer_img,finallyPr.result.image);
+
+                        startActivity(new Intent(LoginActivity.this, HomeActivityDriver.class));
+                    }
+
+                } else {
+                    binding.progressBar.setVisibility(View.GONE);
+                    Toast.makeText(LoginActivity.this, finallyPr.message, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<LoginModel> call, Throwable t) {
+
+                binding.progressBar.setVisibility(View.GONE);
+
+                Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 }

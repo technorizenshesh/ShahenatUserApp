@@ -26,7 +26,13 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
 
+        <activity android:name=".TermsCondition"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
 
+        <activity android:name=".PrivacyPolicy"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
@@ -37,11 +43,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Driver.PurchesHistorySceen"
+        <activity
+            android:name=".Driver.PurchesHistorySceen"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
-
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Driver.AddDetailTructEqiment"
             android:screenOrientation="portrait"
@@ -79,10 +84,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Driver.SignUpActivity"
+            android:name=".Driver.SignUpActivityDriver"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".User.PromoCodeScreen"
             android:screenOrientation="portrait"
