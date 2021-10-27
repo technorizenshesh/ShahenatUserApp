@@ -8,6 +8,19 @@
         android:layout_height="match_parent"
         >
 
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/progressBar"
+            android:background="@drawable/progresh_background"
+            android:elevation="6dp"
+            android:padding="5dp"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/purple_200"
+            android:visibility="gone"/>
+
         <RelativeLayout
             android:id="@+id/RRtoolbar"
             android:layout_width="match_parent"
@@ -54,6 +67,8 @@
                     >
 
                     <ImageView
+                        android:padding="@dimen/_10sdp"
+                        android:id="@+id/img"
                         android:background="@drawable/hammer"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_150sdp"
@@ -89,17 +104,17 @@
                     android:layout_height="@dimen/_50sdp">
 
                     <TextView
-                        android:id="@+id/txtProductName"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
+                        android:id="@+id/txtEquimentName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
                         android:text="Hammer"
                         android:textColor="@color/black_new"
                         android:textSize="@dimen/_14sdp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txtPrice"
                         android:layout_alignParentRight="true"
                         android:textStyle="bold"
                         android:drawablePadding="@dimen/_5sdp"
@@ -134,6 +149,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/txtDescription"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"
                     android:layout_alignParentLeft="true"
@@ -162,10 +178,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txtColorName"
                         android:layout_alignParentRight="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Yellow"
+                        android:text=""
                         android:textColor="@color/black_new"
                         android:textSize="@dimen/_16sdp"
                         />
@@ -191,10 +208,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txtNumberPlate"
                         android:layout_alignParentRight="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="GH 0987 GD"
+                        android:text=""
                         android:textColor="@color/black_new"
                         android:textSize="@dimen/_16sdp"
                         />
@@ -220,10 +238,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txtManufacturing"
                         android:layout_alignParentRight="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="JCB"
+                        android:text=""
                         android:textColor="@color/black_new"
                         android:textSize="@dimen/_16sdp"
                         />
@@ -248,10 +267,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txtModel"
                         android:layout_alignParentRight="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2018-19"
+                        android:text=""
                         android:textColor="@color/black_new"
                         android:textSize="@dimen/_16sdp"
                         />
@@ -276,13 +296,13 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:layout_alignParentRight="true"
+                        android:id="@+id/txtBrand"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Excavator"
+                        android:layout_alignParentRight="true"
+                        android:text=""
                         android:textColor="@color/black_new"
-                        android:textSize="@dimen/_16sdp"
-                        />
+                        android:textSize="@dimen/_16sdp" />
 
 
                 </RelativeLayout>
@@ -305,10 +325,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/txtSize"
                         android:layout_alignParentRight="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1, 2, 3, 4, 5"
+                        android:text=""
                         android:textColor="@color/black_new"
                         android:textSize="@dimen/_16sdp"
                         />

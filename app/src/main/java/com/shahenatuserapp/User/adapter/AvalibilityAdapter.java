@@ -9,8 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.shahenatuserapp.R;
-import com.shahenatuserapp.User.model.CategoryModel;
+import com.shahenatuserapp.User.model.EquimentModelAvalaible;
 
 import java.util.ArrayList;
 
@@ -18,16 +19,16 @@ import java.util.ArrayList;
 public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private Context mContext;
-    private ArrayList<CategoryModel> modelList;
+    private ArrayList<EquimentModelAvalaible.Result> modelList;
     private OnItemClickListener mItemClickListener;
 
 
-    public AvalibilityAdapter(Context context, ArrayList<CategoryModel> modelList) {
+    public AvalibilityAdapter(Context context, ArrayList<EquimentModelAvalaible.Result> modelList) {
         this.mContext = context;
         this.modelList = modelList;
     }
 
-    public void updateList(ArrayList<CategoryModel> modelList) {
+    public void updateList(ArrayList<EquimentModelAvalaible.Result> modelList) {
         this.modelList = modelList;
         notifyDataSetChanged();
     }
@@ -42,11 +43,20 @@ public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         //Here you can fill your row view
         if (holder instanceof ViewHolder) {
-            final CategoryModel model = getItem(position);
+            final EquimentModelAvalaible.Result model = getItem(position);
             final ViewHolder genericViewHolder = (ViewHolder) holder;
 
-            genericViewHolder.txtName.setText(model.getName());
-            genericViewHolder.imgNew.setImageResource(model.getImg());
+            genericViewHolder.txtName.setText(model.getEquipmentName());
+            genericViewHolder.txtPrice.setText(model.getPriceKm());
+            genericViewHolder.txtDescription.setText(model.getDescription());
+
+            if(model.getVehicleImage()!=null)
+            {
+                Glide.with(mContext).load(model.getVehicleImage()).placeholder(R.drawable.buldozer)
+                        .into(genericViewHolder.Vechl_img);
+            }
+
+            //genericViewHolder.imgNew.setImageResource(model.getImg());
         }
 
     }
@@ -60,24 +70,28 @@ public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mItemClickListener = mItemClickListener;
     }
 
-    private CategoryModel getItem(int position) {
+    private EquimentModelAvalaible.Result getItem(int position) {
         return modelList.get(position);
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, CategoryModel model);
+        void onItemClick(View view, int position, EquimentModelAvalaible.Result model);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtName;
-        ImageView imgNew;
+        TextView txtPrice;
+        TextView txtDescription;
+        ImageView Vechl_img;
 
         public ViewHolder(final View itemView) {
             super(itemView);
 
           this.txtName=itemView.findViewById(R.id.txtName);
-          this.imgNew=itemView.findViewById(R.id.imgNew);
+          this.txtPrice=itemView.findViewById(R.id.txtPrice);
+          this.txtDescription=itemView.findViewById(R.id.txtDescription);
+          this.Vechl_img=itemView.findViewById(R.id.Vechl_img);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -17,13 +17,12 @@
         >
 
         <ImageView
-            android:id="@+id/img"
+            android:id="@+id/Vechl_img"
             android:src="@drawable/buldozer"
             android:layout_gravity="center"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
             >
-
         </ImageView>
 
         <TextView
@@ -37,6 +36,7 @@
             />
 
         <TextView
+            android:id="@+id/txtPrice"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_gravity="center"
             android:textStyle="bold"
@@ -50,6 +50,7 @@
             />
 
         <TextView
+            android:id="@+id/txtEstimateTime"
             android:gravity="center"
             android:paddingBottom="@dimen/_5sdp"
             android:paddingTop="@dimen/_5sdp"

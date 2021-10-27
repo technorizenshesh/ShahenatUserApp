@@ -3,20 +3,28 @@ package com.shahenatuserapp.User;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,18 +32,25 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.shahenatuserapp.ChosseLoginActivity;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.shahenatuserapp.GPSTracker;
+import com.shahenatuserapp.MapRelated.DrawPollyLine;
 import com.shahenatuserapp.R;
-import com.shahenatuserapp.SplashActivity;
-import com.shahenatuserapp.User.adapter.AvalibilityAdapter;
 import com.shahenatuserapp.User.adapter.NearByAvaiableAdapter;
-import com.shahenatuserapp.User.model.CategoryModel;
+import com.shahenatuserapp.User.model.NearestDriverModel;
 import com.shahenatuserapp.databinding.ActivityRideBinding;
+import com.shahenatuserapp.utils.RetrofitClients;
+import com.shahenatuserapp.utils.SessionManager;
 import com.skyfishjy.library.RippleBackground;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RideActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -46,7 +61,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
     double longitude = 0;
     private GoogleMap mMap;
 
-    private ArrayList<CategoryModel> modelList = new ArrayList<>();
+    private ArrayList<NearestDriverModel.Result> modelList = new ArrayList<>();
     NearByAvaiableAdapter mAdapter;
     String ProductName="";
 
@@ -55,10 +70,58 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     String PaymentType="";
 
+
+    LatLng PickUpLatLng, DropOffLatLng;
+    MarkerOptions PicUpMarker, DropOffMarker, carMarker1;
+    public static boolean run = true;
+    private PolylineOptions lineOptions;
+
+    double PicUp_latitude = 0;
+    double PicUp_longitude = 0;
+
+    double Droplatitude = 0;
+    double Droplongitude = 0;
+
+    int PERMISSION_ID = 44;
+    private SessionManager sessionManager;
+
+    ArrayList<Marker> markers = new ArrayList<Marker>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding= DataBindingUtil.setContentView(this,R.layout.activity_ride);
+
+        sessionManager = new SessionManager(RideActivity.this);
+
+        Intent intent1=getIntent();
+
+        if(intent1!=null)
+        {
+            PicUp_latitude= Double.parseDouble(intent1.getStringExtra("PickUpLat").toString());
+            PicUp_longitude= Double.parseDouble(intent1.getStringExtra("PickUpLon").toString());
+            Droplatitude= Double.parseDouble(intent1.getStringExtra("DropLat").toString());
+            Droplongitude= Double.parseDouble(intent1.getStringExtra("DropLon").toString());
+
+            Log.e("PicKUpLat-----",PicUp_latitude+"");
+            Log.e("PicKUpLong--------",PicUp_longitude+"");
+
+            Log.e("DropLat-----",Droplatitude+"");
+            Log.e("DropLong--------",Droplongitude+"");
+
+            if (sessionManager.isNetworkAvailable()) {
+
+                binding.progressBar.setVisibility(View.VISIBLE);
+
+                getNearestDriversMethod();
+
+            }else {
+
+                Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
+
+            }
+
+        }
 
         binding.Imgback.setOnClickListener(v -> {
             onBackPressed();
@@ -70,20 +133,6 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
-        //Gps Lat Long
-        gpsTracker = new GPSTracker(RideActivity.this);
-        if (gpsTracker.canGetLocation()) {
-            latitude = gpsTracker.getLatitude();
-            longitude = gpsTracker.getLongitude();
-        } else {
-            gpsTracker.showSettingsAlert();
-        }
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map1);
-        mapFragment.getMapAsync(this);
-
-        setAdapter();
 
         binding.RadioGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
@@ -105,7 +154,53 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        if (checkPermissions()) {
+            if (isLocationEnabled()) {
+                Setup();
+            } else {
+                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            requestPermissions();
+        }
 
+    }
+
+    private void Setup() {
+
+        //Gps Lat Long
+        gpsTracker = new GPSTracker(RideActivity.this);
+        if (gpsTracker.canGetLocation()) {
+            latitude = gpsTracker.getLatitude();
+            longitude = gpsTracker.getLongitude();
+        } else {
+            gpsTracker.showSettingsAlert();
+        }
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map1);
+        mapFragment.getMapAsync(this);
+
+        PickUpLatLng = new LatLng(PicUp_latitude, PicUp_longitude);
+
+        DropOffLatLng = new LatLng(Droplatitude, Droplongitude);
+       // DropOffLatLng = new LatLng(23.2599, 77.4126);
+
+        PicUpMarker = new MarkerOptions().title("Pick Up Location")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
+
+
+        DropOffMarker = new MarkerOptions().title("Drop Off Location")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
+
+    /*    carMarker1 = new MarkerOptions().title("Car")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));*/
+
+      //  markers.add(PicUpMarker);
+
+        DrawPolyLine();
     }
 
     @Override
@@ -114,27 +209,57 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.clear();
         LatLng sydney = new LatLng(latitude, longitude);
 
-        mMap.addMarker(new MarkerOptions()
+      /*  mMap.addMarker(new MarkerOptions()
                 .position(sydney)
                 .title("Sydney")
                 .snippet("Population: 4,627,300")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon)));
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
-
+*/
     }
-
 
     @NonNull
     private CameraPosition getCameraPositionWithBearing(LatLng latLng) {
-        return new CameraPosition.Builder().target(latLng).zoom(14).build();
+        return new CameraPosition.Builder().target(latLng).zoom(11).build();
     }
 
-    private void setAdapter() {
+    private boolean checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
 
-        this.modelList.add(new CategoryModel("Bulldozer",R.drawable.buldozer));
-        this.modelList.add(new CategoryModel("Bulldozer",R.drawable.box_truck));
-        this.modelList.add(new CategoryModel("Bulldozer",R.drawable.box_truck));
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                PERMISSION_ID
+        );
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                LocationManager.NETWORK_PROVIDER
+        );
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Setup();
+            }
+        }
+    }
+
+
+
+    private void setAdapter(ArrayList<NearestDriverModel.Result> modelList) {
 
         mAdapter = new NearByAvaiableAdapter(RideActivity.this,modelList);
         binding.recyclerNearBy.setHasFixedSize(true);
@@ -143,10 +268,12 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding.recyclerNearBy.setAdapter(mAdapter);
         mAdapter.SetOnItemClickListener(new NearByAvaiableAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, CategoryModel model) {
+            public void onItemClick(View view, int position, NearestDriverModel.Result model) {
 
-                ProductName=model.getName().toString();
-                Toast.makeText(RideActivity.this, ""+ProductName, Toast.LENGTH_SHORT).show();
+                binding.txtTime.setText(model.getEstimateTime()+" min");
+
+                //ProductName=model.getName().toString();
+               // Toast.makeText(RideActivity.this, ""+ProductName, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -188,4 +315,101 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
     }
+
+
+    private void DrawPolyLine() {
+        DrawPollyLine.get(this).setOrigin(PickUpLatLng)
+                .setDestination(DropOffLatLng).execute(new DrawPollyLine.onPolyLineResponse() {
+            @Override
+            public void Success(ArrayList<LatLng> latLngs) {
+                mMap.clear();
+                lineOptions = new PolylineOptions();
+                lineOptions.addAll(latLngs);
+                lineOptions.width(10);
+                lineOptions.color(R.color.purple_200);
+                AddDefaultMarker();
+            }
+        });
+    }
+
+    public void AddDefaultMarker() {
+        if (mMap != null) {
+            mMap.clear();
+            if (lineOptions != null)
+                mMap.addPolyline(lineOptions);
+            if (PickUpLatLng != null) {
+                PicUpMarker.position(PickUpLatLng);
+                markers.add(mMap.addMarker(PicUpMarker));
+                //allINGoogleMap(markers);
+               // animateCamera(PickUpLatLng);
+
+            }
+            if (DropOffLatLng != null) {
+                DropOffMarker.position(DropOffLatLng);
+                // mMap.addMarker(DropOffMarker);
+                markers.add(mMap.addMarker(DropOffMarker));
+            }
+            allINGoogleMap(markers);
+        }
+    }
+
+
+    private void animateCamera(@NonNull LatLng location) {
+
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(location)));
+    }
+
+    private void getNearestDriversMethod(){
+
+       String lat= String.valueOf(PicUp_latitude);
+       String lon= String.valueOf(PicUp_longitude);
+
+        Call<NearestDriverModel> call = RetrofitClients.getInstance().getApi()
+                .get_neareast_drivers(lat,lon);
+        call.enqueue(new Callback<NearestDriverModel>() {
+            @Override
+            public void onResponse(Call<NearestDriverModel> call, Response<NearestDriverModel> response) {
+
+                binding.progressBar.setVisibility(View.GONE);
+
+                NearestDriverModel finallyPr = response.body();
+
+                String status = finallyPr.status;
+                String Message = finallyPr.message;
+
+                if (status.equalsIgnoreCase("1")) {
+
+                    // String EstTime = String.valueOf(finallyPr.getResult().get(0).getEstimateTime());
+
+                  //  binding.txtTime.setText(EstTime+" min");
+
+                    modelList = (ArrayList<NearestDriverModel.Result>) finallyPr.result;
+
+                     setAdapter(modelList);
+
+                } else {
+
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onFailure(Call<NearestDriverModel> call, Throwable t) {
+
+                binding.progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void allINGoogleMap(ArrayList<Marker> markers){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 300; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
+        mMap.animateCamera(cu);
+    }
+
 }

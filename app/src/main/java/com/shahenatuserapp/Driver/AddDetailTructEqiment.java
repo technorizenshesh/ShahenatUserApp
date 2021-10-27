@@ -97,6 +97,7 @@ public class AddDetailTructEqiment extends AppCompatActivity {
 
     public ArrayList<EquimentModelData> modelist = new ArrayList<>();
     String token="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -381,6 +382,10 @@ public class AddDetailTructEqiment extends AppCompatActivity {
 
     private void ApISignUpMehod() {
 
+        String lat="22.7244";
+        String lon="75.8839";
+
+
         MultipartBody.Part imgFile = null;
         MultipartBody.Part imgFileEquiment = null;
 
@@ -406,8 +411,8 @@ public class AddDetailTructEqiment extends AppCompatActivity {
         RequestBody Home2 = RequestBody.create(MediaType.parse("text/plain"), home2);
         RequestBody Password = RequestBody.create(MediaType.parse("text/plain"), password);
         RequestBody City = RequestBody.create(MediaType.parse("text/plain"), city);
-        RequestBody Lat = RequestBody.create(MediaType.parse("text/plain"), "75.00");
-        RequestBody Long = RequestBody.create(MediaType.parse("text/plain"), "75.00");
+        RequestBody Lat = RequestBody.create(MediaType.parse("text/plain"), lat);
+        RequestBody Long = RequestBody.create(MediaType.parse("text/plain"), lon);
         RequestBody Register_id = RequestBody.create(MediaType.parse("text/plain"), token);
         RequestBody Type = RequestBody.create(MediaType.parse("text/plain"), "DRIVER");
 

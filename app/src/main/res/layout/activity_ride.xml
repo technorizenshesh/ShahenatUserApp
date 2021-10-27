@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+   >
 
     <RelativeLayout
+        android:padding="@dimen/_2sdp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
 
         <fragment
+            android:layout_above="@+id/RRbtm"
             android:id="@+id/map1"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".act.MapsActivity" />
+
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/progressBar"
+            android:background="@drawable/progresh_background"
+            android:elevation="6dp"
+            android:padding="5dp"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/purple_200"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/RRtoolbar"
@@ -43,8 +58,8 @@
         </RelativeLayout>
 
 
-
         <LinearLayout
+            android:id="@+id/RRbtm"
             android:background="@drawable/border_white_top"
             android:layout_alignParentBottom="true"
             android:padding="@dimen/_10sdp"
@@ -83,7 +98,7 @@
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="24 min"
+                    android:text=""
                     android:textColor="@color/purple_200"
                     android:textSize="@dimen/_12sdp"
                     />
@@ -91,6 +106,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/txtTime"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:textStyle="bold"

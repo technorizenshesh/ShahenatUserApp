@@ -47,7 +47,7 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final ViewHolder genericViewHolder = (ViewHolder) holder;
 
             genericViewHolder.txtName.setText(model.getName());
-            genericViewHolder.imgNew.setImageResource(model.getImg());
+            //genericViewHolder.imgNew.setImageResource(model.getImg());
         }
 
     }
@@ -78,7 +78,7 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
           this.txtName=itemView.findViewById(R.id.txtName);
-          this.imgNew=itemView.findViewById(R.id.imgNew);
+         // this.imgNew=itemView.findViewById(R.id.imgNew);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

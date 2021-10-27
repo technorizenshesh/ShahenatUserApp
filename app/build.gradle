@@ -93,5 +93,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     implementation 'com.google.firebase:firebase-messaging:9.6.1'
 
+    //Poliline
+    implementation 'com.github.developeramit3:ApiCall:8f4053a663'
+
 }
 apply plugin: 'com.google.gms.google-services'

@@ -35,7 +35,6 @@ public class SplashActivity extends AppCompatActivity implements
         if (permissioncheck()) {
             finds();
         } else {
-
             requestPermission();
         }
 

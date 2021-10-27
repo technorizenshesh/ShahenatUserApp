@@ -12,9 +12,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
+import com.shahenatuserapp.User.model.DetailsModel;
+import com.shahenatuserapp.User.model.EquimentModelAvalaible;
 import com.shahenatuserapp.databinding.ActivityAvaliviltyDetailsBinding;
+import com.shahenatuserapp.utils.RetrofitClients;
+import com.shahenatuserapp.utils.SessionManager;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AvaliviltyDetails extends AppCompatActivity {
 
@@ -22,23 +35,13 @@ public class AvaliviltyDetails extends AppCompatActivity {
     private View promptsView;
     private AlertDialog alertDialog;
 
+    private SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding= DataBindingUtil.setContentView(this,R.layout.activity_avalivilty_details);
 
-
-        Intent intent=getIntent();
-        if(intent !=null)
-        {
-           String ProductName=intent.getStringExtra("ProductName");
-
-           if(ProductName.equalsIgnoreCase(""))
-           {
-               binding.txtTool.setText(ProductName);
-               binding.txtProductName.setText(ProductName);
-           }
-        }
 
        binding.Imgback.setOnClickListener(v -> {
 
@@ -56,6 +59,19 @@ public class AvaliviltyDetails extends AppCompatActivity {
             startActivity(new Intent(AvaliviltyDetails.this,ArrivingActivity.class));
 
         });
+
+        sessionManager = new SessionManager(AvaliviltyDetails.this);
+
+        if (sessionManager.isNetworkAvailable()) {
+
+            binding.progressBar.setVisibility(View.VISIBLE);
+
+            getAvailableEuimentMethod();
+
+        }else {
+
+            Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -83,6 +99,55 @@ public class AvaliviltyDetails extends AppCompatActivity {
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+    }
+
+    private void getAvailableEuimentMethod(){
+
+      String id= Preference.get(AvaliviltyDetails.this,Preference.KEY_avail_id);
+
+        Call<DetailsModel> call = RetrofitClients.getInstance().getApi()
+                .get_avalable_equipment_details(id);
+        call.enqueue(new Callback<DetailsModel>() {
+            @Override
+            public void onResponse(Call<DetailsModel> call, Response<DetailsModel> response) {
+
+                binding.progressBar.setVisibility(View.GONE);
+
+                DetailsModel finallyPr = response.body();
+
+                String status = finallyPr.getStatus();
+                String Message = finallyPr.getMessage();
+
+                if (status.equalsIgnoreCase("1")) {
+
+                    if(finallyPr.getResult().getVehicleImage()!=null)
+                    {
+                        Glide.with(AvaliviltyDetails.this).load(finallyPr.getResult().getVehicleImage()).placeholder(R.drawable.buldozer)
+                                .into(binding.img);
+                    }
+
+                    binding.txtEquimentName.setText(finallyPr.getResult().getEquipmentName());
+                    binding.txtPrice.setText(finallyPr.getResult().getPriceKm());
+                    binding.txtDescription.setText(finallyPr.getResult().getDescription());
+                    binding.txtColorName.setText(finallyPr.getResult().getColor());
+                    binding.txtNumberPlate.setText(finallyPr.getResult().getNumberPlate());
+                    binding.txtManufacturing.setText(finallyPr.getResult().getNumberPlate());
+                    binding.txtModel.setText(finallyPr.getResult().getModel());
+                    binding.txtBrand.setText(finallyPr.getResult().getBrand());
+                    binding.txtSize.setText(finallyPr.getResult().getSize());
+
+                    binding.txtTool.setText(finallyPr.getResult().getEquipmentName());
+
+                } else {
+
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onFailure(Call<DetailsModel> call, Throwable t) {
+                binding.progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
 }

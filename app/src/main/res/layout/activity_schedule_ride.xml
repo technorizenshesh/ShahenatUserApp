@@ -135,6 +135,7 @@
                     >
 
                     <TextView
+                        android:id="@+id/txtFromDate"
                         android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_centerVertical="true"
                         android:gravity="center"
@@ -171,6 +172,7 @@
                     >
 
                     <TextView
+                        android:id="@+id/toDate"
                         android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_centerVertical="true"
                         android:gravity="center"
@@ -227,12 +229,53 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Pick Up Address"
+                    android:text="Pick Up Location"
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp" />
 
+                <RelativeLayout
+                    android:elevation="@dimen/_3sdp"
+                    android:id="@+id/RRpickUpAddress"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/edt_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_45sdp"
+                    >
+
+
+                    <TextView
+                        android:id="@+id/tvPickUp"
+                        android:layout_toLeftOf="@+id/img2"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_centerVertical="true"
+                        android:gravity="left |center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Drop Address"
+                        android:textColor="@color/black_new"
+                        android:textSize="@dimen/_12sdp"
+                        />
+
+                    <ImageView
+                        android:id="@+id/img2"
+                        android:src="@drawable/arw_right_gry"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        >
+
+                    </ImageView>
+
+
+                </RelativeLayout>
+
                 <EditText
+                    android:visibility="gone"
                     android:textColorHint="@color/black_new"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
@@ -253,12 +296,53 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Drop Address"
+                    android:text="Drop Location"
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
-                    android:textSize="@dimen/_12sdp" />
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+                <RelativeLayout
+                    android:elevation="@dimen/_3sdp"
+                    android:id="@+id/RRDropUpAddress"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/edt_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_45sdp"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvDropUp"
+                        android:layout_toLeftOf="@+id/img34"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_centerVertical="true"
+                        android:gravity="left |center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Drop Address"
+                        android:textColor="@color/black_new"
+                        android:textSize="@dimen/_12sdp"
+                        />
+
+                    <ImageView
+                        android:id="@+id/img34"
+                        android:src="@drawable/arw_right_gry"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="@dimen/_10sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        >
+
+                    </ImageView>
+
+
+                </RelativeLayout>
 
                 <EditText
+                    android:visibility="gone"
                     android:textColorHint="@color/black_new"
                     android:layout_marginRight="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"

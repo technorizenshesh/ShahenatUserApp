@@ -128,8 +128,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         sessionManager = new SessionManager(LoginActivity.this);
 
-
-
          setUp();
 
     }

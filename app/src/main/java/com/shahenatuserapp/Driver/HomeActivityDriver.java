@@ -32,10 +32,6 @@ import com.shahenatuserapp.ChosseLoginActivity;
 import com.shahenatuserapp.GPSTracker;
 import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
-import com.shahenatuserapp.User.ArrivingActivity;
-import com.shahenatuserapp.User.HomeActiivity;
-import com.shahenatuserapp.User.LoginActivity;
-import com.shahenatuserapp.User.RideActivity;
 import com.shahenatuserapp.databinding.ActivityHomeDriverBinding;
 import com.skyfishjy.library.RippleBackground;
 
