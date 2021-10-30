@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -31,9 +35,12 @@ import com.shahenatuserapp.utils.RetrofitClients;
 import com.shahenatuserapp.utils.SessionManager;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -50,6 +57,43 @@ public class ScheduleRideActivity extends AppCompatActivity{
     int AUTOCOMPLETE_REQUEST_CODE_ADDRESS = 101;
     int AUTOCOMPLETE_REQUEST_CODE_ADDRESS1 = 102;
 
+    String User_id= "";
+    String Type_id= "";
+    String from_date= "";
+    String to_date= "";
+    String from_time= "04:00";
+    String no_vehicle= "";
+    String from_address= "";
+    String lat_current= "";
+    String long_current= "";
+    String from_lat= "";
+    String from_lon= "";
+    String to_address= "";
+    String to_lat= "";
+    String to_lon= "";
+
+
+    private int mYear, mMonth,mDay;
+    private int mYear1, mMonth1,mDay1;
+    String DateIn="";
+    String DateInNew="";
+    String DateOut="";
+    String NewDate;
+    String  DateInnew;
+    Calendar c1;
+    Calendar c2;
+    DatePickerDialog datePickerDialog;
+
+    int Check_In_Year;
+    int Check_In_month;
+    int Check_In_day;
+
+
+    long ConvertDate;
+
+    boolean isSelectedFirst=false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +101,25 @@ public class ScheduleRideActivity extends AppCompatActivity{
 
         sessionManager = new SessionManager(ScheduleRideActivity.this);
 
+        c1 = Calendar.getInstance();
+
         binding.Imgback.setOnClickListener(v -> {
+
             onBackPressed();
+
+        });
+
+
+        binding.spinnerCatgory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View arg1, int pos, long arg3) {
+
+                Type_id = modelist.get(pos).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
         });
 
         binding.txtNext.setOnClickListener(v -> {
@@ -96,52 +157,105 @@ public class ScheduleRideActivity extends AppCompatActivity{
 
         });
 
+        binding.RRtime.setOnClickListener(v -> {
+
+            final Calendar c2 = Calendar.getInstance();
+            int hour = c2.get(Calendar.HOUR_OF_DAY);
+            int minute = c2.get(Calendar.MINUTE);
+            // Create a new instance of TimePickerDialog
+            TimePickerDialog timePickerDialog = new TimePickerDialog(ScheduleRideActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                    binding.txtTime.setText( selectedHour + ":" + selectedMinute);
+
+
+                    from_time = selectedHour + ":" + selectedMinute;
+
+                    TimeSet(timePicker,selectedHour,selectedMinute);
+
+
+                }
+            }, hour, minute, false);//Yes 24 hour time
+            timePickerDialog.setTitle("Select Time");
+            timePickerDialog.show();
+
+        });
+
         binding.RRdateFrom.setOnClickListener(v -> {
 
-            final Calendar c = Calendar.getInstance();
-            int mYear = c.get(Calendar.YEAR);
-            int  mMonth = c.get(Calendar.MONTH);
-            int  mDay = c.get(Calendar.DAY_OF_MONTH);
+            mYear = c1.get(Calendar.YEAR);
+            mMonth = c1.get(Calendar.MONTH);
+            mDay = c1.get(Calendar.DAY_OF_MONTH);
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(ScheduleRideActivity.this,
+            datePickerDialog = new DatePickerDialog(ScheduleRideActivity.this,
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
+                            //  RR_booking_Date.setVisibility( View.VISIBLE );
+                            //  txt_time.setVisibility(View.VISIBLE);
                             view.setVisibility(View.VISIBLE);
-                            dob = (dayOfMonth+"-"+(monthOfYear+1)+"-"+year);
-                            binding.txtFromDate.setText(dob);
+                            //String   Date = (dayOfMonth+"-"+(monthOfYear+1)+"-"+year);
+                            DateIn = (year+"-"+(monthOfYear+1)+"-"+dayOfMonth);
+                            String DateIn1= (year+"-"+(monthOfYear+1)+"-"+dayOfMonth);
+                            DateInNew = (year+""+(monthOfYear+1)+""+dayOfMonth);
+
+                            Check_In_Year = year;
+                            Check_In_month = monthOfYear;
+                            Check_In_day = dayOfMonth;
+                            DateInnew= String.valueOf(year+monthOfYear+dayOfMonth);
+                            String NewDate = getDate(DateIn);
+
+                            ConvertDate =  milliseconds(DateIn1);
+
+                            binding.txtFromDate.setText(NewDate);
+
+                            isSelectedFirst=true;
+
                         }
                     }, mYear, mMonth, mDay);
 
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
 
             datePickerDialog.show();
-
         });
 
         binding.RRdateto.setOnClickListener(v -> {
 
-            final Calendar c = Calendar.getInstance();
-            int mYear = c.get(Calendar.YEAR);
-            int  mMonth = c.get(Calendar.MONTH);
-            int  mDay = c.get(Calendar.DAY_OF_MONTH);
+            if(isSelectedFirst)
+            {
+                datePickerDialog = new DatePickerDialog(ScheduleRideActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                //  RR_booking_Date.setVisibility( View.VISIBLE );
+                                //  txt_time.setVisibility(View.VISIBLE);
+                                view.setVisibility(View.VISIBLE);
+                                //String   Date = (dayOfMonth+"-"+(monthOfYear+1)+"-"+year);
+                                DateOut = (year+"-"+(monthOfYear+1)+"-"+dayOfMonth);
+                                DateInNew = (year+""+(monthOfYear+1)+""+dayOfMonth);
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(ScheduleRideActivity.this,
-                    new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year,
-                                              int monthOfYear, int dayOfMonth) {
-                            view.setVisibility(View.VISIBLE);
-                            dob = (dayOfMonth+"-"+(monthOfYear+1)+"-"+year);
-                            binding.toDate.setText(dob);
-                        }
-                    }, mYear, mMonth, mDay);
+                                DateInnew= String.valueOf(year+monthOfYear+dayOfMonth);
 
-             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                                String NewDate = getDate(DateOut);
 
-            datePickerDialog.show();
+                                binding.toDate.setText(NewDate);
 
+                            }
+                        }, Check_In_Year, Check_In_month, Check_In_day);
+
+                datePickerDialog.getDatePicker().setMinDate(ConvertDate);
+
+                datePickerDialog.show();
+
+            }else
+            {
+                binding.toDate.setText("mm/dd/yy");
+
+                Toast.makeText(this, "Please Select From Date.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         if (sessionManager.isNetworkAvailable()) {
@@ -246,5 +360,64 @@ public class ScheduleRideActivity extends AppCompatActivity{
             }
         }
     }
+
+
+    public void TimeSet(TimePicker view, int hourOfDay, int minute) {
+
+        String am_pm = "";
+
+        Calendar datetime = Calendar.getInstance();
+        datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        datetime.set(Calendar.MINUTE, minute);
+
+        if (datetime.get(Calendar.AM_PM) == Calendar.AM)
+            am_pm = "AM";
+        else if (datetime.get(Calendar.AM_PM) == Calendar.PM)
+            am_pm = "PM";
+
+        String strHrsToShow = (datetime.get(Calendar.HOUR) == 0) ?"12":datetime.get(Calendar.HOUR)+"";
+
+         from_time = strHrsToShow+":"+datetime.get(Calendar.MINUTE)+" "+am_pm;
+
+        binding.txtTime.setText( strHrsToShow+":"+datetime.get(Calendar.MINUTE)+" "+am_pm );
+
+    }
+
+
+    public long milliseconds(String date)
+    {
+        //String date_ = date;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try
+        {
+            Date mDate = sdf.parse(date);
+            long timeInMilliseconds = mDate.getTime();
+            System.out.println("Date in milli :: " + timeInMilliseconds);
+            return timeInMilliseconds;
+        }
+        catch (ParseException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+
+    private String getDate(String Date)
+    {
+        SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date dateObj = null;
+        try {
+            dateObj = curFormater.parse(Date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat postFormater = new SimpleDateFormat("dd MMM yyyy");
+        String newDateStr = postFormater.format(dateObj);
+        return newDateStr;
+    }
+
 
 }

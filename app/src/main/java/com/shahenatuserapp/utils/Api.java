@@ -5,6 +5,7 @@ import com.shahenatuserapp.Driver.Model.EquimentModel;
 import com.shahenatuserapp.PrivacyPolicyModel;
 import com.shahenatuserapp.User.model.DetailsModel;
 import com.shahenatuserapp.User.model.EquimentModelAvalaible;
+import com.shahenatuserapp.User.model.GetPriceModel;
 import com.shahenatuserapp.User.model.LoginModel;
 import com.shahenatuserapp.User.model.NearestDriverModel;
 
@@ -24,6 +25,7 @@ public interface Api {
     String user_signup ="user_signup";
     String social_login ="social_login";
     String get_neareast_drivers ="get_neareast_drivers";
+    String get_price_km ="get_price_km";
     String get_avalable_equipment ="get_avalable_equipment";
     String get_avalable_equipment_details ="get_avalable_equipment_details";
 
@@ -89,6 +91,18 @@ public interface Api {
     Call<NearestDriverModel> get_neareast_drivers(
             @Field("lat") String lat,
             @Field("lon") String lon
+    );
+
+  @FormUrlEncoded
+    @POST(get_price_km)
+    Call<GetPriceModel> get_price_km(
+            @Field("user_id") String user_id,
+            @Field("pickup_add") String pickup_add,
+            @Field("p_lat") String p_lat,
+            @Field("p_lon") String p_lon,
+            @Field("drop_add") String drop_add,
+            @Field("d_lat") String d_lat,
+            @Field("d_lon") String d_lon
     );
 
     @Multipart

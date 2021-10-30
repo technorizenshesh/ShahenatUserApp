@@ -104,8 +104,9 @@ public class AddDetailTructEqiment extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_detail_truct_eqiment);
 
         Intent intent = getIntent();
-        if (intent != null) {
 
+        if (intent != null) {
+                
             Bundle extras = intent.getExtras();
             firstName = extras.getString("firstName");
             lastName = extras.getString("lastName");
@@ -170,7 +171,6 @@ public class AddDetailTructEqiment extends AppCompatActivity {
         binding.txtSignUp.setOnClickListener(v -> {
 
             Validation();
-
             //  startActivity(new Intent(AddDetailTructEqiment.this, HomeActivityDriver.class));
 
         });
@@ -340,6 +340,7 @@ public class AddDetailTructEqiment extends AppCompatActivity {
 
 
     public void getAllEquiment() {
+
         Call<EquimentModel> call = RetrofitClients
                 .getInstance()
                 .getApi()

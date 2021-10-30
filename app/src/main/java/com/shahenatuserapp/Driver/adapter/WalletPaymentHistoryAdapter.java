@@ -1,6 +1,4 @@
 package com.shahenatuserapp.Driver.adapter;
-
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,6 @@ import com.shahenatuserapp.R;
 import com.shahenatuserapp.User.model.CategoryModel;
 
 import java.util.ArrayList;
-
 
 public class WalletPaymentHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 

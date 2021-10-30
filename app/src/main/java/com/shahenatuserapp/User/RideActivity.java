@@ -38,8 +38,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.shahenatuserapp.GPSTracker;
 import com.shahenatuserapp.MapRelated.DrawPollyLine;
+import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
 import com.shahenatuserapp.User.adapter.NearByAvaiableAdapter;
+import com.shahenatuserapp.User.model.GetPriceModel;
+import com.shahenatuserapp.User.model.GetPriceModelData;
 import com.shahenatuserapp.User.model.NearestDriverModel;
 import com.shahenatuserapp.databinding.ActivityRideBinding;
 import com.shahenatuserapp.utils.RetrofitClients;
@@ -61,7 +64,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
     double longitude = 0;
     private GoogleMap mMap;
 
-    private ArrayList<NearestDriverModel.Result> modelList = new ArrayList<>();
+    private ArrayList<GetPriceModelData> modelList = new ArrayList<>();
     NearByAvaiableAdapter mAdapter;
     String ProductName="";
 
@@ -124,12 +127,15 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         binding.Imgback.setOnClickListener(v -> {
+
             onBackPressed();
+
         });
 
         binding.RRBook.setOnClickListener(v -> {
 
-            AlertDaliogArea();
+
+          AlertDaliogArea();
 
         });
 
@@ -195,11 +201,6 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         DropOffMarker = new MarkerOptions().title("Drop Off Location")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
 
-    /*    carMarker1 = new MarkerOptions().title("Car")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));*/
-
-      //  markers.add(PicUpMarker);
-
         DrawPolyLine();
     }
 
@@ -209,14 +210,6 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.clear();
         LatLng sydney = new LatLng(latitude, longitude);
 
-      /*  mMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Sydney")
-                .snippet("Population: 4,627,300")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon)));
-
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
-*/
     }
 
     @NonNull
@@ -259,7 +252,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    private void setAdapter(ArrayList<NearestDriverModel.Result> modelList) {
+    private void setAdapter(ArrayList<GetPriceModelData> modelList) {
 
         mAdapter = new NearByAvaiableAdapter(RideActivity.this,modelList);
         binding.recyclerNearBy.setHasFixedSize(true);
@@ -268,12 +261,13 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding.recyclerNearBy.setAdapter(mAdapter);
         mAdapter.SetOnItemClickListener(new NearByAvaiableAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, NearestDriverModel.Result model) {
+            public void onItemClick(View view, int position,GetPriceModelData model) {
 
-                binding.txtTime.setText(model.getEstimateTime()+" min");
+                binding.txtTotalTime.setText(model.getEstimateTime()+"");
+                binding.txtTotalAmt.setText(model.getPrice()+"");
+                binding.txtTotalDistance.setText(model.getDistance()+"");
 
-                //ProductName=model.getName().toString();
-               // Toast.makeText(RideActivity.this, ""+ProductName, Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -361,21 +355,27 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void getNearestDriversMethod(){
 
-       String lat= String.valueOf(PicUp_latitude);
-       String lon= String.valueOf(PicUp_longitude);
+        String User_id=Preference.get(RideActivity.this,Preference.KEY_USER_ID);
 
-        Call<NearestDriverModel> call = RetrofitClients.getInstance().getApi()
-                .get_neareast_drivers(lat,lon);
-        call.enqueue(new Callback<NearestDriverModel>() {
+       String PicUp_lat= String.valueOf(PicUp_latitude);
+       String PicUp_long= String.valueOf(PicUp_longitude);
+
+       String Drop_lat= String.valueOf(Droplatitude);
+       String Drop_long= String.valueOf(Droplongitude);
+
+        Call<GetPriceModel> call = RetrofitClients.getInstance().getApi()
+                .get_price_km(User_id,"",PicUp_lat,PicUp_long,"",
+                        Drop_lat,Drop_long);
+        call.enqueue(new Callback<GetPriceModel>() {
             @Override
-            public void onResponse(Call<NearestDriverModel> call, Response<NearestDriverModel> response) {
+            public void onResponse(Call<GetPriceModel> call, Response<GetPriceModel> response) {
 
                 binding.progressBar.setVisibility(View.GONE);
 
-                NearestDriverModel finallyPr = response.body();
+                GetPriceModel finallyPr = response.body();
 
-                String status = finallyPr.status;
-                String Message = finallyPr.message;
+                String status = finallyPr.getStatus();
+                String Message = finallyPr.getMessage();
 
                 if (status.equalsIgnoreCase("1")) {
 
@@ -383,7 +383,15 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                   //  binding.txtTime.setText(EstTime+" min");
 
-                    modelList = (ArrayList<NearestDriverModel.Result>) finallyPr.result;
+
+                    modelList = (ArrayList<GetPriceModelData>) finallyPr.getResult();
+
+                    if(!modelList.isEmpty())
+                    {
+                       binding.txtTotalTime.setText(modelList.get(0).getEstimateTime()+"");
+                       binding.txtTotalAmt.setText(modelList.get(0).getPrice()+"");
+                       binding.txtTotalDistance.setText(modelList.get(0).getDistance()+"");
+                    }
 
                      setAdapter(modelList);
 
@@ -393,7 +401,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
             @Override
-            public void onFailure(Call<NearestDriverModel> call, Throwable t) {
+            public void onFailure(Call<GetPriceModel> call, Throwable t) {
 
                 binding.progressBar.setVisibility(View.GONE);
             }

@@ -1,8 +1,12 @@
 package com.shahenatuserapp.User;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -12,6 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,6 +33,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -36,6 +47,9 @@ import com.shahenatuserapp.User.model.LoginModel;
 import com.shahenatuserapp.databinding.ActivityLogin2Binding;
 import com.shahenatuserapp.utils.RetrofitClients;
 import com.shahenatuserapp.utils.SessionManager;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -78,12 +92,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     String social_id="";
     String social_image="";
 
+
+    //FaceBook
+    CallbackManager mCallbackManager;
+    LoginButton loginButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login2);
 
-         Type= Preference.get(LoginActivity.this,Preference.KEY_Login_type);
+        Type= Preference.get(LoginActivity.this,Preference.KEY_Login_type);
 
         if(Type.equalsIgnoreCase("Driver"))
         {
@@ -114,6 +133,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             gpsTracker.showSettingsAlert();
         }
 
+
+
+        try {
+            PackageInfo info = this.getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String hashKey = new String(Base64.encode(md.digest(), 0));
+                Log.i(TAG, "printHashKey() Hash Key: " + hashKey);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "printHashKey()", e);
+        } catch (Exception e) {
+            Log.e(TAG, "printHashKey()", e);
+        }
+
+
         //Google SignIn
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -125,6 +161,37 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        //FaceBook
+        loginButton = findViewById(R.id.connectWithFbButton);
+        mCallbackManager = CallbackManager.Factory.create();
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d("TAG", "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+            @Override
+            public void onCancel() {
+                Toast.makeText(LoginActivity.this, "btnCancel", Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "facebook:onCancel");
+                // ...
+            }
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(LoginActivity.this, "Btnerrror", Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "facebook:onError", error);
+                // ...
+            }
+        });
+
+        binding.imgFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                loginButton.performClick();
+            }
+        });
 
         sessionManager = new SessionManager(LoginActivity.this);
 
@@ -192,6 +259,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent( data );
             handleSignInResult( result );
+        }else {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -209,19 +278,20 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
              Socilal_address2="";
              Socilal_type="";
              social_id=account.getId();
+             social_image= String.valueOf(account.getPhotoUrl());
 
              social_image= String.valueOf(account.getPhotoUrl());
 
-            if (sessionManager.isNetworkAvailable()) {
+                if (sessionManager.isNetworkAvailable()) {
 
-                binding.progressBar.setVisibility(View.VISIBLE);
+                    binding.progressBar.setVisibility(View.VISIBLE);
 
-                ApISignUpMehod("USER");
+                    ApISignUpMehod("USER");
 
-            }else {
+                }else {
 
-                Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
-            }
+                    Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
+                }
 
         } else {
 
@@ -364,10 +434,57 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onFailure(Call<LoginModel> call, Throwable t) {
 
                 binding.progressBar.setVisibility(View.GONE);
-
                 Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-
             }
         });
     }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d("TAG", "handleFacebookAccessToken:" + token);
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            //   Toast.makeText(Activity_LoginOption.this, ""+token, Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            String UsernAME=user.getDisplayName();
+                            String email=user.getEmail();
+                            String SocialId=user.getUid();
+                            Uri Url=user.getPhotoUrl();
+
+                            Socilal_FirstName=user.getDisplayName();
+                            Socilal_last_name="";
+                            Socilal_email=user.getEmail();
+                            Socilal_mobile="";
+                            Socilal_city="";
+                            Socilal_address="";
+                            Socilal_address2="";
+                            Socilal_type="";
+                            social_id=user.getUid();
+
+                            social_image= String.valueOf(user.getPhotoUrl());
+
+                            if (sessionManager.isNetworkAvailable()) {
+
+                                binding.progressBar.setVisibility(View.VISIBLE);
+
+                                ApISignUpMehod("USER");
+
+                            }else {
+
+                                Toast.makeText(LoginActivity.this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
+                            }
+
+                            Toast.makeText(LoginActivity.this, ""+UsernAME, Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            Toast.makeText(LoginActivity.this, ""+task.getException(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
 }

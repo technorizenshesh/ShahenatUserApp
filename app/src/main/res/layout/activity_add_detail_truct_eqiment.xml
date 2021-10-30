@@ -347,7 +347,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Price 1Km"
+                    android:text="Price 1 Km"
                     android:textColor="@color/gray_new"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp" />
@@ -363,8 +363,8 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_45sdp"
-                    android:text="70 Km"
-                    android:inputType="textEmailAddress"
+                    android:text="70"
+                    android:inputType="number"
                     android:textColor="@color/black_new" />
 
 

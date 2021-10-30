@@ -209,6 +209,7 @@
                     >
 
                     <TextView
+                        android:id="@+id/txtTime"
                         android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_centerVertical="true"
                         android:gravity="center"

@@ -181,7 +181,9 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
     private void setUp(){
 
         binding.dashboard.RRSchedule.setOnClickListener(v -> {
+
             startActivity(new Intent(HomeActiivity.this,ScheduleRideActivity.class));
+
         });
 
         binding.dashboard.RRNext.setOnClickListener(v -> {
@@ -192,12 +194,27 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
             String PicUp_latitudeNew= String.valueOf(PicUp_latitude);
             String PicUp_longitudeNew= String.valueOf(PicUp_longitude);
 
-            Intent intent=new Intent(HomeActiivity.this,RideActivity.class);
-            intent.putExtra("DropLat",DroplatitudeNew);
-            intent.putExtra("DropLon",DroplongitudeNew);
-            intent.putExtra("PickUpLat",PicUp_latitudeNew);
-            intent.putExtra("PickUpLon",PicUp_longitudeNew);
-            startActivity(intent);
+             Log.e("dropLat---------",""+DroplatitudeNew);
+             Log.e("dropLong---------->",""+DroplongitudeNew);
+
+
+             if(DroplatitudeNew.equals("0.0"))
+             {
+                 Toast.makeText(HomeActiivity.this, "Please Drop Location Select.", Toast.LENGTH_SHORT).show();
+
+             }else if(DroplongitudeNew.equals("0.0"))
+             {
+                 Toast.makeText(HomeActiivity.this, "Please Drop Location Select.", Toast.LENGTH_SHORT).show();
+
+             }else
+             {
+                 Intent intent=new Intent(HomeActiivity.this,RideActivity.class);
+                 intent.putExtra("DropLat",DroplatitudeNew);
+                 intent.putExtra("DropLon",DroplongitudeNew);
+                 intent.putExtra("PickUpLat",PicUp_latitudeNew);
+                 intent.putExtra("PickUpLon",PicUp_longitudeNew);
+                 startActivity(intent);
+             }
 
         });
 
@@ -253,17 +270,6 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
 
         mMap = googleMap;
         mMap.clear();
-
-      /*LatLng sydney = new LatLng(PicUp_latitude, PicUp_longitude);
-
-        mMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Sydney")
-                .snippet("Population: 4,627,300")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon)));
-
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
-   */
 
     }
 
@@ -354,7 +360,6 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //setMarker(latLng);
                 }
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
@@ -376,26 +381,8 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
                      DroplatitudeNew= String.valueOf(Droplatitude);
                      DroplongitudeNew= String.valueOf(Droplongitude);
 
-                    String PicUp_latitudeNew= String.valueOf(PicUp_latitude);
-                    String PicUp_longitudeNew= String.valueOf(PicUp_longitude);
-
-                    Intent intent=new Intent(HomeActiivity.this,RideActivity.class);
-                    intent.putExtra("DropLat",DroplatitudeNew);
-                    intent.putExtra("DropLon",DroplongitudeNew);
-                    intent.putExtra("PickUpLat",PicUp_latitudeNew);
-                    intent.putExtra("PickUpLon",PicUp_longitudeNew);
-                    startActivity(intent);
-
-                  /*  mMap.clear();
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Droplatitude, Droplongitude))
-                            .title("Marker in Location"));
-
-                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(Droplatitude, Droplongitude))));
-*/
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //setMarker(latLng);
                 }
 
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
@@ -501,15 +488,17 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
     }
 
     private void allINGoogleMap(ArrayList<Marker> markers){
+
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
         for (Marker marker : markers) {
             builder.include(marker.getPosition());
         }
+
         LatLngBounds bounds = builder.build();
+
         int padding = 200; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-      //  mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
 
         mMap.animateCamera(cu);
 

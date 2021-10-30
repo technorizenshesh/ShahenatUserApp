@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.shahenatuserapp.R;
 import com.shahenatuserapp.User.model.CategoryModel;
+import com.shahenatuserapp.User.model.GetPriceModelData;
 import com.shahenatuserapp.User.model.NearestDriverModel;
 
 import java.util.ArrayList;
@@ -22,17 +23,17 @@ import java.util.ArrayList;
 public class NearByAvaiableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private Context mContext;
-    private ArrayList<NearestDriverModel.Result> modelList;
+    private ArrayList<GetPriceModelData> modelList;
     private OnItemClickListener mItemClickListener;
 
     int pos=0;
 
-    public NearByAvaiableAdapter(Context context, ArrayList<NearestDriverModel.Result> modelList) {
+    public NearByAvaiableAdapter(Context context, ArrayList<GetPriceModelData> modelList) {
         this.mContext = context;
         this.modelList = modelList;
     }
 
-    public void updateList(ArrayList<NearestDriverModel.Result> modelList) {
+    public void updateList(ArrayList<GetPriceModelData> modelList) {
         this.modelList = modelList;
         notifyDataSetChanged();
     }
@@ -47,7 +48,7 @@ public class NearByAvaiableAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         //Here you can fill your row view
         if (holder instanceof ViewHolder) {
-            final NearestDriverModel.Result model = getItem(position);
+            final GetPriceModelData model = getItem(position);
             final ViewHolder genericViewHolder = (ViewHolder) holder;
 
 
@@ -66,13 +67,13 @@ public class NearByAvaiableAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             });
 
-            genericViewHolder.name.setText(model.getDriverVehicle().getEquipmentName());
-            genericViewHolder.txtPrice.setText(model.getDriverVehicle().getPriceKm());
+            genericViewHolder.name.setText(model.getEquipmentName());
+            genericViewHolder.txtPrice.setText(model.getPriceKm());
             genericViewHolder.txtEstimateTime.setText(model.getEstimateTime()+" Min");
 
-            if(model.getDriverVehicle().getVehicleImage()!=null)
+            if(model.getVehicleImage()!=null)
             {
-                Glide.with(mContext).load(model.getDriverVehicle().getVehicleImage()).placeholder(R.drawable.buldozer)
+                Glide.with(mContext).load(model.getVehicleImage()).placeholder(R.drawable.buldozer)
                     .into(genericViewHolder.Vechl_img);
             }
 
@@ -89,12 +90,12 @@ public class NearByAvaiableAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.mItemClickListener = mItemClickListener;
     }
 
-    private NearestDriverModel.Result getItem(int position) {
+    private GetPriceModelData getItem(int position) {
         return modelList.get(position);
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, NearestDriverModel.Result model);
+        void onItemClick(View view, int position, GetPriceModelData model);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
