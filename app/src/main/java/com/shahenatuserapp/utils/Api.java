@@ -28,6 +28,7 @@ public interface Api {
     String get_price_km ="get_price_km";
     String get_avalable_equipment ="get_avalable_equipment";
     String get_avalable_equipment_details ="get_avalable_equipment_details";
+    String get_schedule_ride  ="schedule_ride ";
 
     //Driver
     String driver_signup ="driver_signup";
@@ -96,6 +97,18 @@ public interface Api {
   @FormUrlEncoded
     @POST(get_price_km)
     Call<GetPriceModel> get_price_km(
+            @Field("user_id") String user_id,
+            @Field("pickup_add") String pickup_add,
+            @Field("p_lat") String p_lat,
+            @Field("p_lon") String p_lon,
+            @Field("drop_add") String drop_add,
+            @Field("d_lat") String d_lat,
+            @Field("d_lon") String d_lon
+    );
+
+  @FormUrlEncoded
+    @POST(get_schedule_ride)
+    Call<GetPriceModel> get_schedule_ride(
             @Field("user_id") String user_id,
             @Field("pickup_add") String pickup_add,
             @Field("p_lat") String p_lat,

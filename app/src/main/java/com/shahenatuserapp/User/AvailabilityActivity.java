@@ -29,11 +29,45 @@ public class AvailabilityActivity extends AppCompatActivity {
     private ArrayList<EquimentModelAvalaible.Result> modelList = new ArrayList<>();
     AvalibilityAdapter mAdapter;
 
+    String Type_id = "";
+    String FromDate = "";
+    String ToDates = "";
+    String from_time = "";
+
+    String PickUp_address = "";
+    String PicUp_latitude = "";
+    String PicUp_longitude = "";
+
+    String DropUp_address = "";
+    String DropUp_latitude = "";
+    String DropUp_longitude = "";
+
+    String No_Vechcli = "";
+
+
     private SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding= DataBindingUtil.setContentView(this,R.layout.activity_availability);
+
+        Intent intent=getIntent();
+
+        if(intent!=null)
+        {
+            Type_id=intent.getStringExtra("Type_id");
+            FromDate=intent.getStringExtra("FromDate");
+            ToDates=intent.getStringExtra("ToDates");
+            from_time=intent.getStringExtra("from_time");
+            PickUp_address=intent.getStringExtra("PickUp_address");
+            PicUp_latitude=intent.getStringExtra("PicUp_latitude");
+            PicUp_longitude=intent.getStringExtra("PicUp_longitude");
+            DropUp_address=intent.getStringExtra("DropUp_address");
+            DropUp_latitude=intent.getStringExtra("DropUp_latitude");
+            DropUp_longitude=intent.getStringExtra("DropUp_longitude");
+            No_Vechcli=intent.getStringExtra("No_Vechcli");
+        }
+
 
         binding.Imgback.setOnClickListener(v -> {
 
