@@ -94,6 +94,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             Log.e("title", "title = " + title);
             Log.e("title", "messageBody = " + messageBody);
+              type = data.get("type");
             try
             {
                 JSONObject object = new JSONObject(data.get("message"));
@@ -101,7 +102,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                  Msg = object.optString("message");
                  Title = object.optString("title");
                  key = object.optString("key");
-                type = object.optString("type");
+
                 //  Intent intent;
 
             }catch (Exception e)
@@ -230,41 +231,70 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intent = new Intent(this, HomeActiivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+
+            String channelId = "1";
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(Msg))
+                    .setSmallIcon(R.mipmap.logo)
+                    //.setLargeIcon(bitmap)
+                    .setContentTitle("Booking Ride")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentText(Msg)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // Since android Oreo notification channel is needed.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Channel human readable title
+                NotificationChannel channel = new NotificationChannel(channelId,
+                        "Cloud Messaging Service",
+                        NotificationManager.IMPORTANCE_DEFAULT);
+
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            notificationManager.notify(getNotificationId(), notificationBuilder.build());
+
         }else
         {
             intent = new Intent(this, HomeActivityDriver.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+                    PendingIntent.FLAG_ONE_SHOT);
+
+            String channelId = "1";
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(Msg))
+                    .setSmallIcon(R.mipmap.logo)
+                    //.setLargeIcon(bitmap)
+                    .setContentTitle("Booking Ride")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentText(Msg)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // Since android Oreo notification channel is needed.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Channel human readable title
+                NotificationChannel channel = new NotificationChannel(channelId,
+                        "Cloud Messaging Service",
+                        NotificationManager.IMPORTANCE_DEFAULT);
+
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            notificationManager.notify(getNotificationId(), notificationBuilder.build());
+
         }
-
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
-                   PendingIntent.FLAG_ONE_SHOT);
-
-           String channelId = "1";
-           Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-           NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
-                   .setStyle(new NotificationCompat.BigTextStyle().bigText(Msg))
-                   .setSmallIcon(R.mipmap.logo)
-                   //.setLargeIcon(bitmap)
-                   .setContentTitle(Title)
-                   .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                   .setContentText(Msg)
-                   .setAutoCancel(true)
-                   .setSound(defaultSoundUri)
-                   .setContentIntent(pendingIntent);
-
-           NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-           // Since android Oreo notification channel is needed.
-           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-               // Channel human readable title
-               NotificationChannel channel = new NotificationChannel(channelId,
-                       "Cloud Messaging Service",
-                       NotificationManager.IMPORTANCE_DEFAULT);
-
-               notificationManager.createNotificationChannel(channel);
-           }
-
-           notificationManager.notify(getNotificationId(), notificationBuilder.build());
 
     }
 

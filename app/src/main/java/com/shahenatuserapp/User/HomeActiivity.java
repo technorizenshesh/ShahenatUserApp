@@ -209,8 +209,10 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
              }else
              {
                  Intent intent=new Intent(HomeActiivity.this,RideActivity.class);
+                 intent.putExtra("DropAddress",DropAddress_address);
                  intent.putExtra("DropLat",DroplatitudeNew);
                  intent.putExtra("DropLon",DroplongitudeNew);
+                 intent.putExtra("PickupAddress",PickUp_address);
                  intent.putExtra("PickUpLat",PicUp_latitudeNew);
                  intent.putExtra("PickUpLon",PicUp_longitudeNew);
                  startActivity(intent);

@@ -8,6 +8,8 @@ import com.shahenatuserapp.User.model.EquimentModelAvalaible;
 import com.shahenatuserapp.User.model.GetPriceModel;
 import com.shahenatuserapp.User.model.LoginModel;
 import com.shahenatuserapp.User.model.NearestDriverModel;
+import com.shahenatuserapp.User.model.SameDayBookingModel;
+import com.shahenatuserapp.User.model.ScheduleRide;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -26,6 +28,7 @@ public interface Api {
     String social_login ="social_login";
     String get_neareast_drivers ="get_neareast_drivers";
     String get_price_km ="get_price_km";
+    String same_day_booking ="same_day_booking";
     String get_avalable_equipment ="get_avalable_equipment";
     String get_avalable_equipment_details ="get_avalable_equipment_details";
     String get_schedule_ride  ="schedule_ride ";
@@ -108,14 +111,19 @@ public interface Api {
 
   @FormUrlEncoded
     @POST(get_schedule_ride)
-    Call<GetPriceModel> get_schedule_ride(
+    Call<ScheduleRide> get_schedule_ride(
             @Field("user_id") String user_id,
-            @Field("pickup_add") String pickup_add,
-            @Field("p_lat") String p_lat,
-            @Field("p_lon") String p_lon,
-            @Field("drop_add") String drop_add,
-            @Field("d_lat") String d_lat,
-            @Field("d_lon") String d_lon
+            @Field("type") String type,
+            @Field("from_date") String from_date,
+            @Field("to_date") String to_date,
+            @Field("from_time") String from_time,
+            @Field("no_vehicle") String no_vehicle,
+            @Field("from_address") String from_address,
+            @Field("from_lat") String from_lat,
+            @Field("from_lon") String from_lon,
+            @Field("to_address") String to_address,
+            @Field("to_lat") String to_lat,
+            @Field("to_lon") String to_lon
     );
 
     @Multipart
@@ -148,6 +156,22 @@ public interface Api {
             @Part("description") RequestBody description
     );
 
+    @FormUrlEncoded
+    @POST(same_day_booking)
+    Call<SameDayBookingModel> same_day_booking(
+            @Field("user_id") String user_id,
+            @Field("driver_id") String driver_id,
+            @Field("vehicle_id") String vehicle_id,
+            @Field("pickup_add") String pickup_add,
+            @Field("p_lat") String p_lat,
+            @Field("p_lon") String p_lon,
+            @Field("drop_add") String drop_add,
+            @Field("d_lat") String d_lat,
+            @Field("d_lon") String d_lon,
+            @Field("total_price") String total_price,
+            @Field("total_km") String total_km,
+            @Field("payment_type") String payment_type
+    );
 
     @POST(get_equipment)
     Call<EquimentModel> get_equipment();

@@ -40,10 +40,12 @@ import com.shahenatuserapp.GPSTracker;
 import com.shahenatuserapp.MapRelated.DrawPollyLine;
 import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
+import com.shahenatuserapp.RideClickListener;
 import com.shahenatuserapp.User.adapter.NearByAvaiableAdapter;
 import com.shahenatuserapp.User.model.GetPriceModel;
 import com.shahenatuserapp.User.model.GetPriceModelData;
 import com.shahenatuserapp.User.model.NearestDriverModel;
+import com.shahenatuserapp.User.model.SameDayBookingModel;
 import com.shahenatuserapp.databinding.ActivityRideBinding;
 import com.shahenatuserapp.utils.RetrofitClients;
 import com.shahenatuserapp.utils.SessionManager;
@@ -55,7 +57,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RideActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class RideActivity extends AppCompatActivity implements OnMapReadyCallback, RideClickListener {
 
     ActivityRideBinding binding;
 
@@ -88,7 +90,16 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
     int PERMISSION_ID = 44;
     private SessionManager sessionManager;
 
+    String VechleId="";
+    String DriverId="";
+    String EstemateTime="";
+    String EstematePrice="";
+    String EstemateDistance="";
+
     ArrayList<Marker> markers = new ArrayList<Marker>();
+
+    String PickupAddress="";
+    String DropAddress="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +116,9 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
             PicUp_longitude= Double.parseDouble(intent1.getStringExtra("PickUpLon").toString());
             Droplatitude= Double.parseDouble(intent1.getStringExtra("DropLat").toString());
             Droplongitude= Double.parseDouble(intent1.getStringExtra("DropLon").toString());
+
+             PickupAddress=intent1.getStringExtra("PickupAddress").toString();
+             DropAddress=intent1.getStringExtra("DropAddress").toString();
 
             Log.e("PicKUpLat-----",PicUp_latitude+"");
             Log.e("PicKUpLong--------",PicUp_longitude+"");
@@ -134,9 +148,25 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         binding.RRBook.setOnClickListener(v -> {
 
+            if(PaymentType.equalsIgnoreCase(""))
+            {
+                Toast.makeText(RideActivity.this, "Please Check Payment Type", Toast.LENGTH_SHORT).show();
 
-          AlertDaliogArea();
+            }else {
 
+                if (sessionManager.isNetworkAvailable()) {
+
+                    binding.progressBar.setVisibility(View.VISIBLE);
+
+                    BookingRideMethod();
+
+                }else {
+
+                    Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+          //
         });
 
 
@@ -254,7 +284,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setAdapter(ArrayList<GetPriceModelData> modelList) {
 
-        mAdapter = new NearByAvaiableAdapter(RideActivity.this,modelList);
+        mAdapter = new NearByAvaiableAdapter(RideActivity.this,modelList,RideActivity.this);
         binding.recyclerNearBy.setHasFixedSize(true);
         // use a linear layout manager
         binding.recyclerNearBy.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true));
@@ -262,10 +292,6 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         mAdapter.SetOnItemClickListener(new NearByAvaiableAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position,GetPriceModelData model) {
-
-                binding.txtTotalTime.setText(model.getEstimateTime()+"");
-                binding.txtTotalAmt.setText(model.getPrice()+"");
-                binding.txtTotalDistance.setText(model.getDistance()+"");
 
 
             }
@@ -295,14 +321,14 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        new Handler().postDelayed(new Runnable() {
+      /*  new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 startActivity(new Intent(RideActivity.this,ArrivingActivity.class));
 
             }
-        }, 4000);
+        }, 4000);*/
 
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
@@ -353,15 +379,41 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(location)));
     }
 
+
+    private void allINGoogleMap(ArrayList<Marker> markers){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 300; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
+        mMap.animateCamera(cu);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+         EstemateTime= modelList.get(position).getEstimateTime().toString();
+         EstematePrice= modelList.get(position).getPrice().toString();
+         EstemateDistance= modelList.get(position).getDistance().toString();
+
+        binding.txtTotalTime.setText(EstemateTime);
+        binding.txtTotalAmt.setText(EstematePrice);
+        binding.txtTotalDistance.setText(EstemateDistance);
+
+    }
+
     private void getNearestDriversMethod(){
 
         String User_id=Preference.get(RideActivity.this,Preference.KEY_USER_ID);
 
-       String PicUp_lat= String.valueOf(PicUp_latitude);
-       String PicUp_long= String.valueOf(PicUp_longitude);
+        String PicUp_lat= String.valueOf(PicUp_latitude);
+        String PicUp_long= String.valueOf(PicUp_longitude);
 
-       String Drop_lat= String.valueOf(Droplatitude);
-       String Drop_long= String.valueOf(Droplongitude);
+        String Drop_lat= String.valueOf(Droplatitude);
+        String Drop_long= String.valueOf(Droplongitude);
 
         Call<GetPriceModel> call = RetrofitClients.getInstance().getApi()
                 .get_price_km(User_id,"",PicUp_lat,PicUp_long,"",
@@ -381,19 +433,26 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     // String EstTime = String.valueOf(finallyPr.getResult().get(0).getEstimateTime());
 
-                  //  binding.txtTime.setText(EstTime+" min");
+                    //  binding.txtTime.setText(EstTime+" min");
 
 
                     modelList = (ArrayList<GetPriceModelData>) finallyPr.getResult();
 
                     if(!modelList.isEmpty())
                     {
-                       binding.txtTotalTime.setText(modelList.get(0).getEstimateTime()+"");
-                       binding.txtTotalAmt.setText(modelList.get(0).getPrice()+"");
-                       binding.txtTotalDistance.setText(modelList.get(0).getDistance()+"");
+                        DriverId =modelList.get(0).getDriverId().toString();
+                        VechleId =modelList.get(0).getVehicleId().toString();
+
+                        EstemateTime= modelList.get(0).getEstimateTime().toString();
+                        EstematePrice= modelList.get(0).getPrice().toString();
+                        EstemateDistance= modelList.get(0).getDistance().toString();
+
+                        binding.txtTotalTime.setText(EstemateTime);
+                        binding.txtTotalAmt.setText(EstematePrice);
+                        binding.txtTotalDistance.setText(EstemateDistance);
                     }
 
-                     setAdapter(modelList);
+                    setAdapter(modelList);
 
                 } else {
 
@@ -408,16 +467,52 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void allINGoogleMap(ArrayList<Marker> markers){
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (Marker marker : markers) {
-            builder.include(marker.getPosition());
-        }
-        LatLngBounds bounds = builder.build();
-        int padding = 300; // offset from edges of the map in pixels
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(getCameraPositionWithBearing(new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude()))));
-        mMap.animateCamera(cu);
+    private void BookingRideMethod(){
+
+        String User_id=Preference.get(RideActivity.this,Preference.KEY_USER_ID);
+
+        String PicUp_lat= String.valueOf(PicUp_latitude);
+        String PicUp_long= String.valueOf(PicUp_longitude);
+
+        String Drop_lat= String.valueOf(Droplatitude);
+        String Drop_long= String.valueOf(Droplongitude);
+
+        Call<SameDayBookingModel> call = RetrofitClients.getInstance().getApi()
+                .same_day_booking(User_id,DriverId,VechleId,
+                        PickupAddress,PicUp_lat,PicUp_long,
+                        DropAddress,Drop_lat,Drop_long,
+                        EstematePrice,EstemateDistance,"Cash");
+        call.enqueue(new Callback<SameDayBookingModel>() {
+            @Override
+            public void onResponse(Call<SameDayBookingModel> call, Response<SameDayBookingModel> response) {
+
+                binding.progressBar.setVisibility(View.GONE);
+
+                SameDayBookingModel finallyPr = response.body();
+
+                String status = finallyPr.getStatus();
+                String Message = finallyPr.getMessage();
+
+                if (status.equalsIgnoreCase("1")) {
+
+                    AlertDaliogArea();
+
+                    Toast.makeText(RideActivity.this, "Success..Booking", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onFailure(Call<SameDayBookingModel> call, Throwable t) {
+
+                binding.progressBar.setVisibility(View.GONE);
+            }
+        });
     }
+
+
+
 
 }

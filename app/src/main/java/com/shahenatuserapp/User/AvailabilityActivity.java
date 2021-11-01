@@ -13,6 +13,7 @@ import com.shahenatuserapp.Preference;
 import com.shahenatuserapp.R;
 import com.shahenatuserapp.User.adapter.AvalibilityAdapter;
 import com.shahenatuserapp.User.model.EquimentModelAvalaible;
+import com.shahenatuserapp.User.model.ScheduleRide;
 import com.shahenatuserapp.databinding.ActivityAvailabilityBinding;
 import com.shahenatuserapp.utils.RetrofitClients;
 import com.shahenatuserapp.utils.SessionManager;
@@ -26,7 +27,7 @@ import retrofit2.Response;
 public class AvailabilityActivity extends AppCompatActivity {
 
     ActivityAvailabilityBinding binding;
-    private ArrayList<EquimentModelAvalaible.Result> modelList = new ArrayList<>();
+    private ArrayList<ScheduleRide.Result> modelList = new ArrayList<>();
     AvalibilityAdapter mAdapter;
 
     String Type_id = "";
@@ -46,6 +47,7 @@ public class AvailabilityActivity extends AppCompatActivity {
 
 
     private SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,16 +92,16 @@ public class AvailabilityActivity extends AppCompatActivity {
 
     }
 
-    private void setAdapter(ArrayList<EquimentModelAvalaible.Result> modelList) {
+    private void setAdapter(ArrayList<ScheduleRide.Result> modelList) {
 
-        mAdapter = new AvalibilityAdapter(AvailabilityActivity.this, this.modelList);
+        mAdapter = new AvalibilityAdapter(AvailabilityActivity.this,modelList);
         binding.recyclerAllCategory.setHasFixedSize(true);
         // use a linear layout manager
         binding.recyclerAllCategory.setLayoutManager(new LinearLayoutManager(AvailabilityActivity.this));
         binding.recyclerAllCategory.setAdapter(mAdapter);
         mAdapter.SetOnItemClickListener(new AvalibilityAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, EquimentModelAvalaible.Result model) {
+            public void onItemClick(View view, int position, ScheduleRide.Result model) {
 
                 Preference.save(AvailabilityActivity.this,Preference.KEY_avail_id,model.getId());
 
@@ -112,22 +114,25 @@ public class AvailabilityActivity extends AppCompatActivity {
 
     private void getAvailableEuimentMethod(){
 
-        Call<EquimentModelAvalaible> call = RetrofitClients.getInstance().getApi()
-                .get_avalable_equipment();
-        call.enqueue(new Callback<EquimentModelAvalaible>() {
+        String User_id=Preference.get(AvailabilityActivity.this,Preference.KEY_USER_ID);
+
+        Call<ScheduleRide> call = RetrofitClients.getInstance().getApi()
+                .get_schedule_ride(User_id,Type_id,FromDate,ToDates,from_time,"1"
+                ,PickUp_address,PicUp_latitude,PicUp_longitude,DropUp_address,DropUp_latitude,DropUp_longitude);
+        call.enqueue(new Callback<ScheduleRide>() {
             @Override
-            public void onResponse(Call<EquimentModelAvalaible> call, Response<EquimentModelAvalaible> response) {
+            public void onResponse(Call<ScheduleRide> call, Response<ScheduleRide> response) {
 
                 binding.progressBar.setVisibility(View.GONE);
 
-                EquimentModelAvalaible finallyPr = response.body();
+                ScheduleRide finallyPr = response.body();
 
                 String status = finallyPr.getStatus();
                 String Message = finallyPr.getMessage();
 
                 if (status.equalsIgnoreCase("1")) {
 
-                   modelList= (ArrayList<EquimentModelAvalaible.Result>) finallyPr.getResult();
+                   modelList= (ArrayList<ScheduleRide.Result>) finallyPr.getResult();
 
                    setAdapter(modelList);
 
@@ -137,7 +142,7 @@ public class AvailabilityActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<EquimentModelAvalaible> call, Throwable t) {
+            public void onFailure(Call<ScheduleRide> call, Throwable t) {
                 binding.progressBar.setVisibility(View.GONE);
             }
         });

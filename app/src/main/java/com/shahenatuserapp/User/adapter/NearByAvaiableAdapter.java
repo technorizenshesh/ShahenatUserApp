@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.shahenatuserapp.R;
+import com.shahenatuserapp.RideClickListener;
 import com.shahenatuserapp.User.model.CategoryModel;
 import com.shahenatuserapp.User.model.GetPriceModelData;
 import com.shahenatuserapp.User.model.NearestDriverModel;
@@ -27,10 +28,12 @@ public class NearByAvaiableAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private OnItemClickListener mItemClickListener;
 
     int pos=0;
+    RideClickListener rideClickListener;
 
-    public NearByAvaiableAdapter(Context context, ArrayList<GetPriceModelData> modelList) {
+    public NearByAvaiableAdapter(Context context, ArrayList<GetPriceModelData> modelList, RideClickListener rideClickListener) {
         this.mContext = context;
         this.modelList = modelList;
+        this.rideClickListener = rideClickListener;
     }
 
     public void updateList(ArrayList<GetPriceModelData> modelList) {
@@ -64,6 +67,8 @@ public class NearByAvaiableAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 pos = position;
                 notifyDataSetChanged();
+
+                rideClickListener.onItemClick(position);
 
             });
 

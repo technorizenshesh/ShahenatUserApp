@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.shahenatuserapp.R;
 import com.shahenatuserapp.User.model.EquimentModelAvalaible;
+import com.shahenatuserapp.User.model.ScheduleRide;
 
 import java.util.ArrayList;
 
@@ -19,16 +20,16 @@ import java.util.ArrayList;
 public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private Context mContext;
-    private ArrayList<EquimentModelAvalaible.Result> modelList;
+    private ArrayList<ScheduleRide.Result> modelList;
     private OnItemClickListener mItemClickListener;
 
 
-    public AvalibilityAdapter(Context context, ArrayList<EquimentModelAvalaible.Result> modelList) {
+    public AvalibilityAdapter(Context context, ArrayList<ScheduleRide.Result> modelList) {
         this.mContext = context;
         this.modelList = modelList;
     }
 
-    public void updateList(ArrayList<EquimentModelAvalaible.Result> modelList) {
+    public void updateList(ArrayList<ScheduleRide.Result> modelList) {
         this.modelList = modelList;
         notifyDataSetChanged();
     }
@@ -43,7 +44,7 @@ public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         //Here you can fill your row view
         if (holder instanceof ViewHolder) {
-            final EquimentModelAvalaible.Result model = getItem(position);
+            final ScheduleRide.Result model = getItem(position);
             final ViewHolder genericViewHolder = (ViewHolder) holder;
 
             genericViewHolder.txtName.setText(model.getEquipmentName());
@@ -56,7 +57,6 @@ public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .into(genericViewHolder.Vechl_img);
             }
 
-            //genericViewHolder.imgNew.setImageResource(model.getImg());
         }
 
     }
@@ -70,12 +70,12 @@ public class AvalibilityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mItemClickListener = mItemClickListener;
     }
 
-    private EquimentModelAvalaible.Result getItem(int position) {
+    private ScheduleRide.Result getItem(int position) {
         return modelList.get(position);
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, EquimentModelAvalaible.Result model);
+        void onItemClick(View view, int position, ScheduleRide.Result model);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
