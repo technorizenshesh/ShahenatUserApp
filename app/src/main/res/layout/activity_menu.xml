@@ -3,6 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
 
     <LinearLayout
         android:orientation="vertical"
@@ -30,13 +34,13 @@
                     android:layout_height="@dimen/_70sdp"
                     >
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imgUser"
                         android:src="@drawable/user"
                         android:layout_width="@dimen/_70sdp"
                         android:layout_height="@dimen/_70sdp"
                         >
-                    </ImageView>
+                    </de.hdodenhof.circleimageview.CircleImageView>
 
                 </androidx.cardview.widget.CardView>
 
@@ -67,12 +71,32 @@
 
         </RelativeLayout>
 
+
+        <RelativeLayout
+            android:id="@+id/RlProfile"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_50sdp">
+
+            <TextView
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/profile"
+                android:textColor="@color/black_new"
+                android:textSize="@dimen/_16sdp" />
+
+
+        </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/RRRideHistory"
             android:layout_marginLeft="@dimen/_20sdp"
             android:layout_gravity="center"
             android:layout_marginRight="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_20sdp"
             android:layout_width="@dimen/_200sdp"
             android:layout_height="@dimen/_50sdp">
 
@@ -186,5 +210,8 @@
 
 
     </LinearLayout>
+
+
+    </ScrollView>
 
 </layout>

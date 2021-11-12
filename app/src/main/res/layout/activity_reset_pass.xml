@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/Imgback"
+            android:layout_margin="@dimen/_5sdp"
+            android:src="@drawable/arw_left"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            >
+        </ImageView>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_below="@+id/Imgback"
+            android:layout_above="@+id/ll_singUp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:padding="@dimen/_15sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <ImageView
+                        android:id="@+id/iv_Logo"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/logo" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reset_password"
+                        android:textColor="@color/black_new"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/_22sdp" />
+
+
+
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/otp"
+                    android:textColor="@color/gray_new"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_12sdp" />
+
+                <EditText
+                    android:id="@+id/etOtp"
+                    android:elevation="@dimen/_3sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:padding="@dimen/_10sdp"
+                    android:background="@drawable/edt_bg"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_45sdp"
+                    android:singleLine="true"
+                    android:inputType="text"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/black_new" />
+
+
+                <TextView
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/new_password"
+                    android:textColor="@color/gray_new"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_12sdp" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:elevation="@dimen/_3sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:padding="@dimen/_10sdp"
+                    android:background="@drawable/edt_bg"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_45sdp"
+                    android:singleLine="true"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionDone"
+                    android:textColor="@color/black_new" />
+
+
+                <TextView
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:id="@+id/btnSend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/iv_Logo"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_50sdp"
+                    android:background="@drawable/btn_bg_yellow_20"
+                    android:elevation="@dimen/_5sdp"
+                    android:gravity="center"
+                    android:padding="@dimen/_12sdp"
+                    android:text="@string/submit"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="bold"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </RelativeLayout>
+
+</layout>

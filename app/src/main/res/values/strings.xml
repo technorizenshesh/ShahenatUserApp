@@ -100,5 +100,34 @@
     <string name="equipments">Equipments</string>
 
     <string name="facebook_app_id">580138633236938</string>
+    <string name="please_wait">please wait...</string>
+
+
+    <string name="thank_you_for_signing_up">Thank you for signing up!</string>
+    <string name="sign_in_successful">Login successful!</string>
+    <string name="please_check_your_email_id">Please check your mail id</string>
+    <string name="wrong_email_id">Wrong email id</string>
+
+    <string name="please_enter_email">Please enter email.</string>
+    <string name="wrong_email">Can\'t enter worng email.</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="otp">Otp</string>
+    <string name="new_password">New Password</string>
+    <string name="please_enter_otp">Please enter OTP.</string>
+    <string name="invalid_otp">invalid OTP</string>
+    <string name="please_enter_pass">Please enter password</string>
+    <string name="otp_text">We\'ll send you a OTP to your register email.</string>
+    <string name="password_changes_successfully">Password changes successfully</string>
+    <string name="change_password">Change Password</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="update">Update</string>
+    <string name="mobile_number">Mobile number</string>
+    <string name="required">required</string>
+    <string name="enter_valid_number">Please enter 10 digit phone number.</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="select_image_from">Select image from</string>
+    <string name="profile">Profile</string>
+
 
 </resources>
