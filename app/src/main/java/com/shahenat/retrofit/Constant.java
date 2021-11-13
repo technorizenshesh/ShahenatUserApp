@@ -6,6 +6,9 @@ public class Constant {
 
     public static String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
+    public static String driver_status = "driver_status";
+
+
     public static String KEY_USER_ID = "user_id";
     public static String KEY_User_name= "User_name";
     public static String KEY_User_email = "User_email";

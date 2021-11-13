@@ -8,10 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.shahenat.ChangePassAct;
 import com.shahenat.R;
-import com.shahenat.User.ChangePasswordAct;
 import com.shahenat.User.EditProfileAct;
-import com.shahenat.User.ProfileAct;
 import com.shahenat.User.model.LoginModel;
 import com.shahenat.databinding.ActivityProfileBinding;
 import com.shahenat.utils.DataManager;
@@ -29,9 +28,9 @@ public class DriverProfileAct extends AppCompatActivity {
     private void initView() {
         binding.Imgback.setOnClickListener(v -> {finish();});
 
-        binding.ivEdit.setOnClickListener(v -> {startActivity(new Intent(this, EditProfileAct.class));});
+        binding.ivEdit.setOnClickListener(v -> {startActivity(new Intent(this, DriverEditProfileAct.class));});
 
-        binding.btnChangePass.setOnClickListener(v -> {startActivity(new Intent(this, ChangePasswordAct.class));});
+        binding.btnChangePass.setOnClickListener(v -> {startActivity(new Intent(this, ChangePassAct.class));});
 
     }
 
@@ -40,7 +39,7 @@ public class DriverProfileAct extends AppCompatActivity {
         loginModel = DataManager.getInstance().getUserData(DriverProfileAct.this);
         binding.tvName.setText(loginModel.result.firstName + " " + loginModel.result.lastName);
         binding.tvMail.setText(loginModel.result.email);
-        binding.tvPlace.setText( loginModel.result.mobile);
+        binding.tvPlace.setText("+"+loginModel.result.countryCode+ loginModel.result.mobile);
         Glide.with(DriverProfileAct.this)
                 .load(loginModel.result.image)
                 .centerCrop()

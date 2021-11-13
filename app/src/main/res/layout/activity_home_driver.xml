@@ -15,7 +15,7 @@
         >
 
         <include
-            android:id="@+id/dashboard"
+            android:id="@+id/dashboard1"
             layout="@layout/activity_home_actiivity_driver"
             />
 

@@ -60,22 +60,18 @@
                         android:layout_height="@dimen/_100sdp"
                         >
 
-                        <ImageView
-                            android:id="@+id/imgeUSer"
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/ivUser"
                             android:layout_width="@dimen/_90sdp"
                             android:layout_height="@dimen/_90sdp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/circl_bg" />
+                            android:src="@drawable/user_default" />
 
                         <ImageView
                             android:layout_alignParentRight="true"
                             android:src="@drawable/add_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            >
-
-                        </ImageView>
-
+                           />
                     </RelativeLayout>
 
 

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.shahenat.ChangePassAct;
 import com.shahenat.R;
 import com.shahenat.User.model.LoginModel;
 import com.shahenat.databinding.ActivityProfileBinding;
@@ -28,7 +29,7 @@ public class ProfileAct extends AppCompatActivity {
 
         binding.ivEdit.setOnClickListener(v -> {startActivity(new Intent(this,EditProfileAct.class));});
 
-        binding.btnChangePass.setOnClickListener(v -> {startActivity(new Intent(this,ChangePasswordAct.class));});
+        binding.btnChangePass.setOnClickListener(v -> {startActivity(new Intent(this, ChangePassAct.class));});
 
     }
 
@@ -37,7 +38,7 @@ public class ProfileAct extends AppCompatActivity {
         loginModel = DataManager.getInstance().getUserData(ProfileAct.this);
         binding.tvName.setText(loginModel.result.firstName + " " + loginModel.result.lastName);
         binding.tvMail.setText(loginModel.result.email);
-        binding.tvPlace.setText( loginModel.result.mobile);
+        binding.tvPlace.setText("+"+loginModel.result.countryCode+ loginModel.result.mobile);
         Glide.with(ProfileAct.this)
                 .load(loginModel.result.image)
                 .centerCrop()

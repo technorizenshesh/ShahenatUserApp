@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 
@@ -13,10 +14,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,16 +31,30 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.shahenat.ChosseLoginActivity;
+import com.shahenat.Driver.services.MyService;
 import com.shahenat.GPSTracker;
 import com.shahenat.R;
+import com.shahenat.User.model.LoginModel;
 import com.shahenat.databinding.ActivityHomeDriverBinding;
+import com.shahenat.retrofit.ApiClient;
+import com.shahenat.retrofit.Constant;
+import com.shahenat.retrofit.ShahenatInterface;
 import com.shahenat.utils.DataManager;
+import com.shahenat.utils.NetworkAvailablity;
 import com.shahenat.utils.SessionManager;
 import com.skyfishjy.library.RippleBackground;
 
-public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyCallback {
+import java.util.HashMap;
+import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyCallback {
+    public String TAG = "HomeActivityDriver";
     ActivityHomeDriverBinding binding;
     GPSTracker gpsTracker;
     double latitude = 0;
@@ -47,26 +65,16 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
     private AlertDialog alertDialog;
     private AlertDialog alertDialog1;
     public Activity activity;
+    ShahenatInterface apiInterface;
+    LoginModel loginModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        apiInterface = ApiClient.getClient().create(ShahenatInterface.class);
         binding= DataBindingUtil.setContentView(this,R.layout.activity_home_driver);
 
         activity=HomeActivityDriver.this;
-
-        String  UserName = DataManager.getInstance().getUserData(HomeActivityDriver.this).result.firstName;
-        String  Email =DataManager.getInstance().getUserData(HomeActivityDriver.this).result.email;
-        String  UserImg =DataManager.getInstance().getUserData(HomeActivityDriver.this).result.image;
-
-        binding.childNavDrawer.txtUserName.setText(UserName);
-        binding.childNavDrawer.txtUserEmail.setText(Email);
-
-        if(!UserImg.equalsIgnoreCase(""))
-        {
-            Glide.with(this).load(UserImg).into(binding.childNavDrawer.imgUser);
-        }
-
         setUp();
     }
 
@@ -86,7 +94,7 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
         }
 
 
-        binding.dashboard.imgDrawer.setOnClickListener(v -> {
+        binding.dashboard1.imgDrawer.setOnClickListener(v -> {
             navmenu();
         });
 
@@ -131,6 +139,21 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
 
             }
         },5000);
+
+        binding.dashboard1.switchOnOff.setOnClickListener(v -> {
+            if(binding.dashboard1.switchOnOff.isChecked()){
+                if(NetworkAvailablity.checkNetworkStatus(HomeActivityDriver.this))
+                    changeStatus(DataManager.getInstance().getUserData(HomeActivityDriver.this).result.id,"ONLINE");
+                else Toast.makeText(HomeActivityDriver.this, getString(R.string.checkInternet), Toast.LENGTH_SHORT).show();
+            }
+            else {
+                if(NetworkAvailablity.checkNetworkStatus(HomeActivityDriver.this))
+                    changeStatus(DataManager.getInstance().getUserData(HomeActivityDriver.this).result.id,"OFFLINE");
+                else Toast.makeText(HomeActivityDriver.this, getString(R.string.checkInternet), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
 
     @Override
@@ -269,5 +292,70 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ContextCompat.startForegroundService(getApplicationContext(),new Intent(HomeActivityDriver.this, MyService.class));
+        setUserInfo();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, MyService.class));
+    }
+
+    private void changeStatus(String id, String status) {
+        Map<String,String> map = new HashMap<>();
+        map.put("user_id",id);
+        map.put("status",status);
+        //  map.put("type",type);
+        Log.e(TAG,"Upldate Driver Status Request "+map);
+        Call<Map<String,String>> loginCall = apiInterface.updateStatus(map);
+        loginCall.enqueue(new Callback<Map<String,String>>() {
+            @Override
+            public void onResponse(Call<Map<String,String>> call, Response<Map<String,String>> response) {
+                DataManager.getInstance().hideProgressMessage();
+                try {
+                    Map<String,String> data = response.body();
+                    String responseString = new Gson().toJson(response.body());
+                    SessionManager.writeString(HomeActivityDriver.this, Constant.driver_status,status);
+                    binding.dashboard1.switchOnOff.setText(status);
+                    Log.e(TAG,"Upldate Driver Status Response :"+responseString);
+                    Toast.makeText(HomeActivityDriver.this, status, Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String,String>> call, Throwable t) {
+                call.cancel();
+                DataManager.getInstance().hideProgressMessage();
+            }
+        });
+    }
+
+
+    public void setUserInfo(){
+        loginModel = new LoginModel();
+        loginModel = DataManager.getInstance().getUserData(HomeActivityDriver.this);
+        binding.childNavDrawer.txtUserName.setText(loginModel.result.firstName);
+        binding.childNavDrawer.txtUserEmail.setText(loginModel.result.email);
+        binding.dashboard1.tvName.setText(loginModel.result.firstName + " " +loginModel.result.lastName);
+      //  binding.dashboard1.tvNumber.setText(loginModel.result.);
+
+        SessionManager.writeString(HomeActivityDriver.this,Constant.driver_status,loginModel.result.onlineStatus);
+        if(SessionManager.readString(HomeActivityDriver.this,Constant.driver_status,"").equals("ONLINE")) binding.dashboard1.switchOnOff.setChecked(true);
+        else  binding.dashboard1.switchOnOff.setChecked(false);
+        Glide.with(this).load(loginModel.result.image).error(R.drawable.user_default).into(binding.childNavDrawer.imgUser);
+        Glide.with(this).load(loginModel.result.image).error(R.drawable.user_default).into(binding.dashboard1.userImgg);
+        binding.dashboard1.switchOnOff.setText(SessionManager.readString(HomeActivityDriver.this,Constant.driver_status,""));
+
+
+
+
+    }
 
 }

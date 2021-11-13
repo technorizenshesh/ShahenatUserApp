@@ -15,6 +15,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+
+
+
+
+
+
 
     <application
         android:allowBackup="true"
@@ -165,7 +173,7 @@
             android:theme="@style/AppTheme" />
 
         <activity
-            android:name="com.shahenat.User.VerificationActivity"
+            android:name="com.shahenat.VerificationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
@@ -219,6 +227,18 @@
 
 
         <activity
+            android:name=".Driver.DriverEditProfileAct"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+
+        <activity
+            android:name=".ChangePassAct"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+
+        <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
 
@@ -245,6 +265,17 @@
                 android:resource="@xml/file_path" />
         </provider>
 
+
+        <service
+            android:name=".Driver.services.MyService"
+            android:enabled="true"
+            android:exported="true" />
+
+
+
+
     </application>
+
+
 
 </manifest>

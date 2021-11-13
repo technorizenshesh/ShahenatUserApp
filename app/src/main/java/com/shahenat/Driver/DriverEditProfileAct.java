@@ -1,7 +1,6 @@
-package com.shahenat.User;
+package com.shahenat.Driver;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,7 +49,7 @@ import retrofit2.Response;
 
 import static com.shahenat.retrofit.Constant.emailPattern;
 
-public class EditProfileAct extends AppCompatActivity  {
+public class DriverEditProfileAct extends AppCompatActivity {
     ActivityEditProfileBinding binding;
     LoginModel loginModel;
     ShahenatInterface apiInterface;
@@ -74,7 +73,7 @@ public class EditProfileAct extends AppCompatActivity  {
             finish();
         });
         loginModel = new LoginModel();
-        loginModel = DataManager.getInstance().getUserData(EditProfileAct.this);
+        loginModel = DataManager.getInstance().getUserData(DriverEditProfileAct.this);
         setUserInfo();
 
 
@@ -109,7 +108,7 @@ public class EditProfileAct extends AppCompatActivity  {
             binding.edMobile.setError(getString(R.string.enter_valid_number));
             binding.edMobile.setFocusable(true);
         } else {
-            if (NetworkAvailablity.checkNetworkStatus(EditProfileAct.this)) {
+            if (NetworkAvailablity.checkNetworkStatus(DriverEditProfileAct.this)) {
                 updateProfile();
             } else {
                 Toast.makeText(this, getString(R.string.checkInternet), Toast.LENGTH_SHORT).show();
@@ -120,7 +119,7 @@ public class EditProfileAct extends AppCompatActivity  {
 
     public void showImageSelection() {
 
-        final Dialog dialog = new Dialog(EditProfileAct.this);
+        final Dialog dialog = new Dialog(DriverEditProfileAct.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().getAttributes().windowAnimations = android.R.style.Widget_Material_ListPopupWindow;
         dialog.setContentView(R.layout.dialog_show_image_selection);
@@ -175,7 +174,7 @@ public class EditProfileAct extends AppCompatActivity  {
 
         str_image_path = tostoreFile.getPath();
 
-        uriSavedImage = FileProvider.getUriForFile(EditProfileAct.this,
+        uriSavedImage = FileProvider.getUriForFile(DriverEditProfileAct.this,
                 BuildConfig.APPLICATION_ID + ".provider",
                 tostoreFile);
 
@@ -195,14 +194,14 @@ public class EditProfileAct extends AppCompatActivity  {
         if (resultCode == RESULT_OK) {
             Log.e("Result_code", requestCode + "");
             if (requestCode == SELECT_FILE) {
-                str_image_path = DataManager.getInstance().getRealPathFromURI(EditProfileAct.this, data.getData());
-                Glide.with(EditProfileAct.this)
+                str_image_path = DataManager.getInstance().getRealPathFromURI(DriverEditProfileAct.this, data.getData());
+                Glide.with(DriverEditProfileAct.this)
                         .load(str_image_path)
                         .centerCrop()
                         .into(binding.ivUser);
 
             } else if (requestCode == REQUEST_CAMERA) {
-                Glide.with(EditProfileAct.this)
+                Glide.with(DriverEditProfileAct.this)
                         .load(str_image_path)
                         .centerCrop()
                         .into(binding.ivUser);
@@ -216,39 +215,39 @@ public class EditProfileAct extends AppCompatActivity  {
 
     //CHECKING FOR Camera STATUS
     public boolean checkPermisssionForReadStorage() {
-        if (ContextCompat.checkSelfPermission(EditProfileAct.this,
+        if (ContextCompat.checkSelfPermission(DriverEditProfileAct.this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED
 
                 ||
 
-                ContextCompat.checkSelfPermission(EditProfileAct.this,
+                ContextCompat.checkSelfPermission(DriverEditProfileAct.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED
                 ||
 
-                ContextCompat.checkSelfPermission(EditProfileAct.this,
+                ContextCompat.checkSelfPermission(DriverEditProfileAct.this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED
         ) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(EditProfileAct.this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(DriverEditProfileAct.this,
                     Manifest.permission.CAMERA)
 
                     ||
 
-                    ActivityCompat.shouldShowRequestPermissionRationale(EditProfileAct.this,
+                    ActivityCompat.shouldShowRequestPermissionRationale(DriverEditProfileAct.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE)
                     ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(EditProfileAct.this,
+                    ActivityCompat.shouldShowRequestPermissionRationale(DriverEditProfileAct.this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 
             ) {
 
 
-                ActivityCompat.requestPermissions(EditProfileAct.this,
+                ActivityCompat.requestPermissions(DriverEditProfileAct.this,
                         new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSION_CONSTANT);
 
@@ -256,7 +255,7 @@ public class EditProfileAct extends AppCompatActivity  {
 
                 //explain("Please Allow Location Permission");
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(EditProfileAct.this,
+                ActivityCompat.requestPermissions(DriverEditProfileAct.this,
                         new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSION_CONSTANT);
             }
@@ -281,10 +280,10 @@ public class EditProfileAct extends AppCompatActivity  {
                     if (camera && read_external_storage && write_external_storage) {
                         showImageSelection();
                     } else {
-                        Toast.makeText(EditProfileAct.this, " permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DriverEditProfileAct.this, " permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(EditProfileAct.this, "  permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DriverEditProfileAct.this, "  permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
                 }
                 // return;
             }
@@ -295,8 +294,8 @@ public class EditProfileAct extends AppCompatActivity  {
 
 
     private void updateProfile() {
-        Log.e("UserId", "updateProfile: " + DataManager.getInstance().getUserData(EditProfileAct.this).result.id);
-        DataManager.getInstance().showProgressMessage(EditProfileAct.this, "Please wait...");
+        Log.e("UserId", "updateProfile: " + DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.id);
+        DataManager.getInstance().showProgressMessage(DriverEditProfileAct.this, "Please wait...");
         MultipartBody.Part filePart;
         if (!str_image_path.equalsIgnoreCase("")) {
             File file = DataManager.getInstance().saveBitmapToFile(new File(str_image_path));
@@ -305,21 +304,21 @@ public class EditProfileAct extends AppCompatActivity  {
             RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("text/plain"), "");
             filePart = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
         }
-        RequestBody user_id = RequestBody.create(MediaType.parse("text/plain"), DataManager.getInstance().getUserData(EditProfileAct.this).result.id);
+        RequestBody user_id = RequestBody.create(MediaType.parse("text/plain"), DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.id);
         RequestBody f_name = RequestBody.create(MediaType.parse("text/plain"), binding.edFname.getText().toString());
         RequestBody l_name = RequestBody.create(MediaType.parse("text/plain"), binding.etLName.getText().toString());
-       // RequestBody email = RequestBody.create(MediaType.parse("text/plain"), binding.etEmail.getText().toString());
+        // RequestBody email = RequestBody.create(MediaType.parse("text/plain"), binding.etEmail.getText().toString());
         RequestBody mobile_number = RequestBody.create(MediaType.parse("text/plain"), binding.edMobile.getText().toString());
         RequestBody countrty_code = RequestBody.create(MediaType.parse("text/plain"), binding.ccp.getSelectedCountryCode());
-     //   RequestBody city = RequestBody.create(MediaType.parse("text/plain"), DataManager.getInstance().getUserData(EditProfileAct.this).result.city);
-      //  RequestBody address = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(EditProfileAct.this).result.address);
-    //    RequestBody address2 = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(EditProfileAct.this).result.address2);
-     //   RequestBody lat = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(EditProfileAct.this).result.lat);
-   //     RequestBody lon = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(EditProfileAct.this).result.lon);
+     //   RequestBody city = RequestBody.create(MediaType.parse("text/plain"), DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.city);
+     //   RequestBody address = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.address);
+   //     RequestBody address2 = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.address2);
+  //      RequestBody lat = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.lat);
+   //     RequestBody lon = RequestBody.create(MediaType.parse("text/plain"),DataManager.getInstance().getUserData(DriverEditProfileAct.this).result.lon);
 
 
 
-        Call<LoginModel> signupCall = apiInterface.editprofile(user_id, f_name, l_name,/* email,*/ mobile_number, countrty_code,/*city,address,address2,lat,lon,*/ filePart);
+        Call<LoginModel> signupCall = apiInterface.driverEditprofile(user_id, f_name, l_name,/* email,*/ mobile_number, countrty_code,/*city,address,address2,lat,lon,*/ filePart);
         signupCall.enqueue(new Callback<LoginModel>() {
             @Override
             public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -329,11 +328,11 @@ public class EditProfileAct extends AppCompatActivity  {
                     if (data.status.equals("1")) {
                         String dataResponse = new Gson().toJson(response.body());
                         Log.e("MapMap", "EDIT PROFILE RESPONSE" + dataResponse);
-                        SessionManager.writeString(EditProfileAct.this, Constant.USER_INFO, dataResponse);
-                        Toast.makeText(EditProfileAct.this, data.message, Toast.LENGTH_SHORT).show();
+                        SessionManager.writeString(DriverEditProfileAct.this, Constant.USER_INFO, dataResponse);
+                        Toast.makeText(DriverEditProfileAct.this, data.message, Toast.LENGTH_SHORT).show();
                         finish();
                     } else if (data.status.equals("0")) {
-                        Toast.makeText(EditProfileAct.this, data.message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DriverEditProfileAct.this, data.message, Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (Exception e) {
@@ -354,12 +353,12 @@ public class EditProfileAct extends AppCompatActivity  {
 
     private void setUserInfo() {
         loginModel = new LoginModel();
-        loginModel = DataManager.getInstance().getUserData(EditProfileAct.this);
+        loginModel = DataManager.getInstance().getUserData(DriverEditProfileAct.this);
         binding.edFname.setText(loginModel.result.firstName);
         binding.etLName.setText(loginModel.result.lastName);
         binding.etEmail.setText(loginModel.result.email);
         binding.edMobile.setText(loginModel.result.mobile);
-        Glide.with(EditProfileAct.this)
+        Glide.with(DriverEditProfileAct.this)
                 .load(loginModel.result.image)
                 .centerCrop()
                 .error(R.drawable.user_default)

@@ -75,12 +75,13 @@ public interface ShahenatInterface {
             @Part("email") RequestBody email,
             @Part("password") RequestBody password,
             @Part("mobile") RequestBody mobile,
-            @Part("city") RequestBody city,
+            @Part("country_code") RequestBody country_code,
+        /*    @Part("city") RequestBody city,
             @Part("address") RequestBody address,
-            @Part("address2") RequestBody address2,
+            @Part("address2") RequestBody address2,*/
             @Part("register_id") RequestBody register_id,
-            @Part("lat") RequestBody lat,
-            @Part("lon") RequestBody lon,
+          /*  @Part("lat") RequestBody lat,
+            @Part("lon") RequestBody lon,*/
             @Part("type") RequestBody type,
             @Part MultipartBody.Part part1
     );
@@ -123,12 +124,13 @@ public interface ShahenatInterface {
             @Part("email") RequestBody email,
             @Part("password") RequestBody password,
             @Part("mobile") RequestBody mobile,
-            @Part("city") RequestBody city,
+            @Part("country_code") RequestBody country_code,
+         /*   @Part("city") RequestBody city,
             @Part("address") RequestBody address,
-            @Part("address2") RequestBody address2,
+            @Part("address2") RequestBody address2,*/
             @Part("register_id") RequestBody register_id,
-            @Part("lat") RequestBody lat,
-            @Part("lon") RequestBody lon,
+          /*  @Part("lat") RequestBody lat,
+            @Part("lon") RequestBody lon,*/
             @Part("type") RequestBody type,
             @Part MultipartBody.Part part1,
             @Part MultipartBody.Part part2,
@@ -201,13 +203,41 @@ public interface ShahenatInterface {
            /* @Part("email") RequestBody email,*/
             @Part("mobile") RequestBody mobile,
             @Part("country_code") RequestBody country_code,
-            @Part("city") RequestBody city,
+           /* @Part("city") RequestBody city,
             @Part("address") RequestBody address,
             @Part("address2") RequestBody address2,
             @Part("lat") RequestBody lat,
-            @Part("lon") RequestBody lon,
+            @Part("lon") RequestBody lon,*/
             @Part MultipartBody.Part file);
 
 
+    @FormUrlEncoded
+    @POST("update_lat_lon")
+    Call<Map<String, String>> updateLocation(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("change_password")
+    Call<Map<String,String>> changePassword(@FieldMap Map<String, String> params);
+
+
+    @Multipart
+    @POST("driver_update_profile")
+    Call<LoginModel> driverEditprofile(
+            @Part("user_id") RequestBody id,
+            @Part("first_name") RequestBody first_name,
+            @Part("last_name") RequestBody last_name,
+            /* @Part("email") RequestBody email,*/
+            @Part("mobile") RequestBody mobile,
+            @Part("country_code") RequestBody country_code,
+         /*   @Part("city") RequestBody city,
+            @Part("address") RequestBody address,
+            @Part("address2") RequestBody address2,
+            @Part("lat") RequestBody lat,
+            @Part("lon") RequestBody lon,*/
+            @Part MultipartBody.Part file);
+
+    @FormUrlEncoded
+    @POST("update_online_status")
+    Call<Map<String, String>> updateStatus(@FieldMap Map<String, String> params);
 
 }

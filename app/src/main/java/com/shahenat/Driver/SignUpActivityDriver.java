@@ -1,62 +1,53 @@
 package com.shahenat.Driver;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 
 import android.Manifest;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.shahenat.BuildConfig;
 import com.shahenat.PrivacyPolicy;
 import com.shahenat.User.LoginActivity;
-import com.shahenat.utils.FileUtil;
+import com.shahenat.utils.DataManager;
+
 import com.shahenat.R;
 import com.shahenat.TermsCondition;
 import com.shahenat.databinding.ActivitySignUpDriverBinding;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
+
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.util.Calendar;
 
-import id.zelory.compressor.Compressor;
 
 public class SignUpActivityDriver extends AppCompatActivity {
 
     ActivitySignUpDriverBinding binding;
-
-    private Bitmap bitmap;
-    private Uri resultUri;
-    //private SessionManager sessionManager;
-    public static File UserProfile_img_driver, codmpressedImage, compressActualFile;
-
-    String firstName="";
-    String lastName="";
-    String email="";
-    String mobile="";
-    String home="";
-    String home2="";
-    String password="";
-    String city="";
-
-    boolean isProfileImage=false;
+    String firstName="" , lastName="",email="",mobile="", home="",home2="",password="",city="";
+    String str_image_path = "";
+    private static final int REQUEST_CAMERA = 1;
+    private static final int SELECT_FILE = 2;
+    private static final int MY_PERMISSION_CONSTANT = 5;
+    private Uri uriSavedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,104 +83,15 @@ public class SignUpActivityDriver extends AppCompatActivity {
 
         });
 
-        binding.RRDriverImage.setOnClickListener(v -> {
-
-            Dexter.withActivity(SignUpActivityDriver.this)
-                    .withPermissions(Manifest.permission.CAMERA,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .withListener(new MultiplePermissionsListener() {
-                        @Override
-                        public void onPermissionsChecked(MultiplePermissionsReport report) {
-                            if (report.areAllPermissionsGranted()) {
-                                Intent intent = CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).getIntent(SignUpActivityDriver.this);
-                                startActivityForResult(intent, 1);
-                            } else {
-                                showSettingDialogue();
-                            }
-                        }
-                        @Override
-                        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                            token.continuePermissionRequest();
-                        }
-                    }).check();
-        });
-    }
-
-
-    private void showSettingDialogue() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivityDriver.this);
-        builder.setTitle("Need Permissions");
-        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
-        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-                openSetting();
-            }
+        binding.ivUser.setOnClickListener(v -> {
+            if (checkPermisssionForReadStorage())
+                showImageSelection();
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        builder.show();
-
-    }
-
-    private void openSetting() {
-
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, 101);
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        CropImage.ActivityResult result = CropImage.getActivityResult(data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                resultUri = result.getUri();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
 
-                    UserProfile_img_driver = FileUtil.from(this, resultUri);
-
-                    Glide.with(this).load(bitmap).circleCrop().into(binding.DriverImg);
-
-                    isProfileImage = true;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    codmpressedImage = new Compressor(this)
-                            .setMaxWidth(640)
-                            .setMaxHeight(480)
-                            .setQuality(75)
-                            .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                            .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_PICTURES).getAbsolutePath())
-                            .compressToFile(UserProfile_img_driver);
-                    Log.e("ActivityTag", "imageFilePAth: " + codmpressedImage);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
-        }
-    }
 
 
 
@@ -204,7 +106,7 @@ public class SignUpActivityDriver extends AppCompatActivity {
         home2 =  binding.edtHomeAdress2.getText().toString();
         password =  binding.edtpassword.getText().toString();
 
-        if(!isProfileImage)
+        if(str_image_path.equals(""))
         {
             Toast.makeText(this, "Please Select Your Image", Toast.LENGTH_SHORT).show();
 
@@ -224,7 +126,7 @@ public class SignUpActivityDriver extends AppCompatActivity {
         {
             Toast.makeText(this, "Please Enter Mobile", Toast.LENGTH_SHORT).show();
 
-        }else if(city.equalsIgnoreCase(""))
+        }/*else if(city.equalsIgnoreCase(""))
         {
             Toast.makeText(this, "Please Enter City", Toast.LENGTH_SHORT).show();
 
@@ -236,7 +138,7 @@ public class SignUpActivityDriver extends AppCompatActivity {
         {
             Toast.makeText(this, "Please Enter Home Address 2", Toast.LENGTH_SHORT).show();
 
-        }else if(password.equalsIgnoreCase(""))
+        }*/else if(password.equalsIgnoreCase(""))
         {
             Toast.makeText(this, "Please Enter Password", Toast.LENGTH_SHORT).show();
 
@@ -248,22 +150,191 @@ public class SignUpActivityDriver extends AppCompatActivity {
             extras.putString("lastName",lastName);
             extras.putString("email",email);
             extras.putString("mobile",mobile);
+            extras.putString("country_code",binding.ccp.getSelectedCountryCode()+"");
             extras.putString("home",home);
             extras.putString("home2",home2);
             extras.putString("password",password);
             extras.putString("city",city);
+            extras.putString("driverImg",str_image_path);
             intent.putExtras(extras);
             startActivity(intent);
 
-          /*  if (sessionManager.isNetworkAvailable()) {
+        }
+    }
 
-                binding.progressBar.setVisibility(View.VISIBLE);
 
-                ApISignUpMehod();
+    public void showImageSelection() {
 
-            }else {
-                Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
-            }*/
+        final Dialog dialog = new Dialog(SignUpActivityDriver.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().getAttributes().windowAnimations = android.R.style.Widget_Material_ListPopupWindow;
+        dialog.setContentView(R.layout.dialog_show_image_selection);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        Window window = dialog.getWindow();
+        lp.copyFrom(window.getAttributes());
+        //This makes the dialog take up the full width
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        window.setAttributes(lp);
+        LinearLayout layoutCamera = (LinearLayout) dialog.findViewById(R.id.layoutCemera);
+        LinearLayout layoutGallary = (LinearLayout) dialog.findViewById(R.id.layoutGallary);
+        layoutCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                dialog.cancel();
+                openCamera();
+            }
+        });
+        layoutGallary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                dialog.cancel();
+                getPhotoFromGallary();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
+
+    private void getPhotoFromGallary() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), SELECT_FILE);
+
+    }
+
+    private void openCamera() {
+
+        File dirtostoreFile = new File(Environment.getExternalStorageDirectory() + "/Shahenat/Images/");
+
+        if (!dirtostoreFile.exists()) {
+            dirtostoreFile.mkdirs();
+        }
+
+        String timestr = DataManager.getInstance().convertDateToString(Calendar.getInstance().getTimeInMillis());
+
+        File tostoreFile = new File(Environment.getExternalStorageDirectory() + "/Shahenat/Images/" + "IMG_" + timestr + ".jpg");
+
+        str_image_path = tostoreFile.getPath();
+
+        uriSavedImage = FileProvider.getUriForFile(SignUpActivityDriver.this,
+                BuildConfig.APPLICATION_ID + ".provider",
+                tostoreFile);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+
+        startActivityForResult(intent, REQUEST_CAMERA);
+
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            Log.e("Result_code", requestCode + "");
+            if (requestCode == SELECT_FILE) {
+                str_image_path = DataManager.getInstance().getRealPathFromURI(SignUpActivityDriver.this, data.getData());
+                Glide.with(SignUpActivityDriver.this)
+                        .load(str_image_path)
+                        .centerCrop()
+                        .into(binding.ivUser);
+
+            } else if (requestCode == REQUEST_CAMERA) {
+                Glide.with(SignUpActivityDriver.this)
+                        .load(str_image_path)
+                        .centerCrop()
+                        .into(binding.ivUser);
+
+
+            }
+
+        }
+    }
+
+
+    //CHECKING FOR Camera STATUS
+    public boolean checkPermisssionForReadStorage() {
+        if (ContextCompat.checkSelfPermission(SignUpActivityDriver.this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED
+
+                ||
+
+                ContextCompat.checkSelfPermission(SignUpActivityDriver.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED
+                ||
+
+                ContextCompat.checkSelfPermission(SignUpActivityDriver.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivityDriver.this,
+                    Manifest.permission.CAMERA)
+
+                    ||
+
+                    ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivityDriver.this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE)
+                    ||
+                    ActivityCompat.shouldShowRequestPermissionRationale(SignUpActivityDriver.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+
+            ) {
+
+
+                ActivityCompat.requestPermissions(SignUpActivityDriver.this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSION_CONSTANT);
+
+            } else {
+
+                //explain("Please Allow Location Permission");
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(SignUpActivityDriver.this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSION_CONSTANT);
+            }
+            return false;
+        } else {
+
+            //  explain("Please Allow Location Permission");
+            return true;
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_CONSTANT: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0) {
+                    boolean camera = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean read_external_storage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean write_external_storage = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    if (camera && read_external_storage && write_external_storage) {
+                        showImageSelection();
+                    } else {
+                        Toast.makeText(SignUpActivityDriver.this, " permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(SignUpActivityDriver.this, "  permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
+                }
+                // return;
+            }
+
+
         }
     }
 

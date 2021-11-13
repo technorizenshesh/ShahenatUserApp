@@ -1,9 +1,13 @@
 package com.shahenat.Driver;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,12 +15,18 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
@@ -27,9 +37,10 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.shahenat.ChosseLoginActivity;
+import com.shahenat.BuildConfig;
 import com.shahenat.User.LoginActivity;
-import com.shahenat.User.VerificationActivity;
+import com.shahenat.User.SignUpActivityUser;
+import com.shahenat.VerificationActivity;
 import com.shahenat.User.model.LoginModel;
 import com.shahenat.retrofit.Constant;
 import com.shahenat.retrofit.ShahenatInterface;
@@ -50,6 +61,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import id.zelory.compressor.Compressor;
@@ -60,50 +72,26 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.shahenat.Driver.SignUpActivityDriver.UserProfile_img_driver;
+
 
 public class AddDetailTructEqiment extends AppCompatActivity {
     public String TAG = "AddDetailTructEqiment";
     ActivityAddDetailTructEqimentBinding binding;
-
-    String firstName = "";
-    String lastName = "";
-    String email = "";
-    String mobile = "";
-    String home = "";
-    String home2 = "";
-    String password = "";
-    String city = "";
-
-    String latitude = "";
-    String longitude = "";
+    String firstName="", lastName="",email="",mobile="",countryCode="", home="",home2="",password="",city="",latitude = "",longitude = "",equiment_Id = "",equipment_name = "",manufacturer = "",model = "",brand = "",size = "",number_plate = "",color = "",price_km = "",description = "";
     GPSTracker gpsTracker;
-
     boolean isEquimentImage = false;
-    SessionManager sessionManager;
-
     private String[] code = {"Male", "Female"};
-
     private Bitmap bitmap;
     private Uri resultUri;
-    //private SessionManager sessionManager;
-    public static File UserProfile_img, codmpressedImage1, compressActualFile;
-
-    String equiment_Id = "";
-
-    String equipment_name = "";
-    String manufacturer = "";
-    String model = "";
-    String brand = "";
-    String size = "";
-    String number_plate = "";
-    String color = "";
-    String price_km = "";
-    String description = "";
-
+    public static File UserProfile_img, codmpressedImage1;
     public ArrayList<EquimentModelData> modelist = new ArrayList<>();
     String token = "";
     ShahenatInterface shahenatInterfaceInterface;
+    String str_image_path = "",str_image_path2 = "";
+    private static final int REQUEST_CAMERA = 1;
+    private static final int SELECT_FILE = 2;
+    private static final int MY_PERMISSION_CONSTANT = 5;
+    private Uri uriSavedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,10 +108,11 @@ public class AddDetailTructEqiment extends AppCompatActivity {
             lastName = extras.getString("lastName");
             email = extras.getString("email");
             mobile = extras.getString("mobile");
-            mobile = extras.getString("mobile");
+            countryCode = extras.getString("country_code");
             home2 = extras.getString("home2");
             password = extras.getString("password");
             city = extras.getString("city");
+            str_image_path = extras.getString("driverImg");
         }
 
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(runnable -> {
@@ -176,29 +165,13 @@ public class AddDetailTructEqiment extends AppCompatActivity {
 
         });
 
-        binding.RRADDImg.setOnClickListener(v ->
-        {
-            Dexter.withActivity(AddDetailTructEqiment.this)
-                    .withPermissions(Manifest.permission.CAMERA,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .withListener(new MultiplePermissionsListener() {
-                        @Override
-                        public void onPermissionsChecked(MultiplePermissionsReport report) {
-                            if (report.areAllPermissionsGranted()) {
-                                Intent intent = CropImage.activity().setGuidelines(CropImageView.Guidelines.OFF).getIntent(AddDetailTructEqiment.this);
-                                startActivityForResult(intent, 1);
-                            } else {
-                                showSettingDialogue();
-                            }
-                        }
 
-                        @Override
-                        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                            token.continuePermissionRequest();
-                        }
-                    }).check();
+        binding.RRADDImg.setOnClickListener(v -> {
+            if (checkPermisssionForReadStorage())
+                showImageSelection();
         });
+
+
 
     }
 
@@ -215,7 +188,7 @@ public class AddDetailTructEqiment extends AppCompatActivity {
         price_km = binding.edtPrice.getText().toString();
         description = binding.edtDescription.getText().toString();
 
-        if (!isEquimentImage) {
+        if (str_image_path2.equals("")) {
             Toast.makeText(this, "Please Select Your Image", Toast.LENGTH_SHORT).show();
 
         } else if (equipment_name.equalsIgnoreCase("")) {
@@ -249,84 +222,6 @@ public class AddDetailTructEqiment extends AppCompatActivity {
 
             if (NetworkAvailablity.checkNetworkStatus(AddDetailTructEqiment.this)) ApISignUpMehod();
             else Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private void showSettingDialogue() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(AddDetailTructEqiment.this);
-        builder.setTitle("Need Permissions");
-        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
-        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-                openSetting();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        builder.show();
-
-    }
-
-    private void openSetting() {
-
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, 101);
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        CropImage.ActivityResult result = CropImage.getActivityResult(data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                resultUri = result.getUri();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-
-                    UserProfile_img = FileUtil.from(this, resultUri);
-
-                    binding.CardEquimentImg.setVisibility(View.VISIBLE);
-                    binding.RRAddEuimentImg.setVisibility(View.GONE);
-
-                    Glide.with(this).load(bitmap).into(binding.vDriverImg);
-
-                    isEquimentImage = true;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    codmpressedImage1 = new Compressor(this)
-                            .setMaxWidth(640)
-                            .setMaxHeight(480)
-                            .setQuality(75)
-                            .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                            .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_PICTURES).getAbsolutePath())
-                            .compressToFile(UserProfile_img);
-                    Log.e("ActivityTag", "imageFilePAth: " + codmpressedImage1);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
         }
     }
 
@@ -372,35 +267,36 @@ public class AddDetailTructEqiment extends AppCompatActivity {
         DataManager.getInstance().showProgressMessage(AddDetailTructEqiment.this, getString(R.string.please_wait));
         String lat = "22.7244";
         String lon = "75.8839";
-        MultipartBody.Part imgFile = null;
-        MultipartBody.Part imgFileEquiment = null;
-
-        if (UserProfile_img_driver == null) {
-
-        } else if (UserProfile_img == null) {
-
+        MultipartBody.Part filePart,filePart1;
+        if (!str_image_path.equalsIgnoreCase("")) {
+            File file = DataManager.getInstance().saveBitmapToFile(new File(str_image_path));
+            filePart = MultipartBody.Part.createFormData("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
         } else {
-
-            RequestBody requestFileOne = RequestBody.create(MediaType.parse("image/*"), UserProfile_img_driver);
-            imgFile = MultipartBody.Part.createFormData("image", UserProfile_img_driver.getName(), requestFileOne);
-
-            RequestBody requesEUiment = RequestBody.create(MediaType.parse("image/*"), UserProfile_img);
-            imgFileEquiment = MultipartBody.Part.createFormData("vehicle_image", UserProfile_img.getName(), requesEUiment);
-
+            RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("text/plain"), "");
+            filePart = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
         }
 
+        if (!str_image_path2.equalsIgnoreCase("")) {
+            File file = DataManager.getInstance().saveBitmapToFile(new File(str_image_path2));
+            filePart1 = MultipartBody.Part.createFormData("vehicle_image", file.getName(), RequestBody.create(MediaType.parse("vehicle_image/*"), file));
+        } else {
+            RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("text/plain"), "");
+            filePart1 = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+        }
         RequestBody FirstName = RequestBody.create(MediaType.parse("text/plain"), firstName);
         RequestBody LastName = RequestBody.create(MediaType.parse("text/plain"), lastName);
         RequestBody Email = RequestBody.create(MediaType.parse("text/plain"), email);
         RequestBody Mobile = RequestBody.create(MediaType.parse("text/plain"), mobile);
-        RequestBody Home = RequestBody.create(MediaType.parse("text/plain"), home);
-        RequestBody Home2 = RequestBody.create(MediaType.parse("text/plain"), home2);
+        RequestBody country_code = RequestBody.create(MediaType.parse("text/plain"), countryCode);
+
+      //  RequestBody Home = RequestBody.create(MediaType.parse("text/plain"), home);
+     //   RequestBody Home2 = RequestBody.create(MediaType.parse("text/plain"), home2);
         RequestBody Password = RequestBody.create(MediaType.parse("text/plain"), password);
-        RequestBody City = RequestBody.create(MediaType.parse("text/plain"), city);
-        RequestBody Lat = RequestBody.create(MediaType.parse("text/plain"), lat);
-        RequestBody Long = RequestBody.create(MediaType.parse("text/plain"), lon);
+     //   RequestBody City = RequestBody.create(MediaType.parse("text/plain"), city);
+     //   RequestBody Lat = RequestBody.create(MediaType.parse("text/plain"), lat);
+     //   RequestBody Long = RequestBody.create(MediaType.parse("text/plain"), lon);
         RequestBody Register_id = RequestBody.create(MediaType.parse("text/plain"), token);
-        RequestBody Type = RequestBody.create(MediaType.parse("text/plain"), "DRIVER");
+        RequestBody Type = RequestBody.create(MediaType.parse("text/plain"), "Driver");
 
 
         RequestBody Equiment_Id = RequestBody.create(MediaType.parse("text/plain"), equiment_Id);
@@ -415,7 +311,7 @@ public class AddDetailTructEqiment extends AppCompatActivity {
         RequestBody Description = RequestBody.create(MediaType.parse("text/plain"), description);
 
 
-        Call<LoginModel> call = shahenatInterfaceInterface.driver_signup(FirstName, LastName, Email, Password, Mobile, City, Home, Home2, Register_id, Lat, Long, Type, imgFile, imgFileEquiment,
+        Call<LoginModel> call = shahenatInterfaceInterface.driver_signup(FirstName, LastName, Email, Password, Mobile,country_code,/* City, Home, Home2,*/ Register_id,/* Lat, Long,*/ Type, filePart, filePart1,
                 Equiment_Id, Equiment_Name, Manufacturer, Model, Brand, Size, Number_plate, Color, Price_km, Description);
 
         call.enqueue(new Callback<LoginModel>() {
@@ -431,7 +327,11 @@ public class AddDetailTructEqiment extends AppCompatActivity {
                         Toast.makeText(AddDetailTructEqiment.this, "" + finallyPr.message, Toast.LENGTH_SHORT).show();
                         SessionManager.writeString(AddDetailTructEqiment.this, Constant.KEY_Login_type, "Driver");
                         SessionManager.writeString(AddDetailTructEqiment.this, Constant.USER_INFO, responseString);
-                        startActivity(new Intent(AddDetailTructEqiment.this, VerificationActivity.class));
+                      /*  startActivity(new Intent(AddDetailTructEqiment.this, VerificationActivity.class)
+                        .putExtra("mobile",mobile)
+                        .putExtra("countryCode",countryCode));*/
+                        startActivity(new Intent(AddDetailTructEqiment.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
                         finish();
 
                     } else {
@@ -449,6 +349,184 @@ public class AddDetailTructEqiment extends AppCompatActivity {
                 Toast.makeText(AddDetailTructEqiment.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    public void showImageSelection() {
+
+        final Dialog dialog = new Dialog(AddDetailTructEqiment.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().getAttributes().windowAnimations = android.R.style.Widget_Material_ListPopupWindow;
+        dialog.setContentView(R.layout.dialog_show_image_selection);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        Window window = dialog.getWindow();
+        lp.copyFrom(window.getAttributes());
+        //This makes the dialog take up the full width
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        window.setAttributes(lp);
+        LinearLayout layoutCamera = (LinearLayout) dialog.findViewById(R.id.layoutCemera);
+        LinearLayout layoutGallary = (LinearLayout) dialog.findViewById(R.id.layoutGallary);
+        layoutCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                dialog.cancel();
+                openCamera();
+            }
+        });
+        layoutGallary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                dialog.cancel();
+                getPhotoFromGallary();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
+
+    private void getPhotoFromGallary() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), SELECT_FILE);
+
+    }
+
+    private void openCamera() {
+
+        File dirtostoreFile = new File(Environment.getExternalStorageDirectory() + "/Shahenat/Images/");
+
+        if (!dirtostoreFile.exists()) {
+            dirtostoreFile.mkdirs();
+        }
+
+        String timestr = DataManager.getInstance().convertDateToString(Calendar.getInstance().getTimeInMillis());
+
+        File tostoreFile = new File(Environment.getExternalStorageDirectory() + "/Shahenat/Images/" + "IMG_" + timestr + ".jpg");
+
+        str_image_path2 = tostoreFile.getPath();
+
+        uriSavedImage = FileProvider.getUriForFile(AddDetailTructEqiment.this,
+                BuildConfig.APPLICATION_ID + ".provider",
+                tostoreFile);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+
+        startActivityForResult(intent, REQUEST_CAMERA);
+
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            Log.e("Result_code", requestCode + "");
+            binding.RRAddEuimentImg.setVisibility(View.GONE);
+            binding.CardEquimentImg.setVisibility(View.VISIBLE);
+            if (requestCode == SELECT_FILE) {
+                str_image_path2 = DataManager.getInstance().getRealPathFromURI(AddDetailTructEqiment.this, data.getData());
+                Glide.with(AddDetailTructEqiment.this)
+                        .load(str_image_path2)
+                        .centerCrop()
+                        .into(binding.vDriverImg);
+
+            } else if (requestCode == REQUEST_CAMERA) {
+                Glide.with(AddDetailTructEqiment.this)
+                        .load(str_image_path2)
+                        .centerCrop()
+                        .into(binding.vDriverImg);
+
+
+            }
+
+        }
+    }
+
+
+    //CHECKING FOR Camera STATUS
+    public boolean checkPermisssionForReadStorage() {
+        if (ContextCompat.checkSelfPermission(AddDetailTructEqiment.this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED
+
+                ||
+
+                ContextCompat.checkSelfPermission(AddDetailTructEqiment.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED
+                ||
+
+                ContextCompat.checkSelfPermission(AddDetailTructEqiment.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(AddDetailTructEqiment.this,
+                    Manifest.permission.CAMERA)
+
+                    ||
+
+                    ActivityCompat.shouldShowRequestPermissionRationale(AddDetailTructEqiment.this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE)
+                    ||
+                    ActivityCompat.shouldShowRequestPermissionRationale(AddDetailTructEqiment.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+
+            ) {
+
+
+                ActivityCompat.requestPermissions(AddDetailTructEqiment.this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSION_CONSTANT);
+
+            } else {
+
+                //explain("Please Allow Location Permission");
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(AddDetailTructEqiment.this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSION_CONSTANT);
+            }
+            return false;
+        } else {
+
+            //  explain("Please Allow Location Permission");
+            return true;
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_CONSTANT: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0) {
+                    boolean camera = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean read_external_storage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean write_external_storage = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    if (camera && read_external_storage && write_external_storage) {
+                        showImageSelection();
+                    } else {
+                        Toast.makeText(AddDetailTructEqiment.this, " permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AddDetailTructEqiment.this, "  permission denied, boo! Disable the functionality that depends on this permission.", Toast.LENGTH_SHORT).show();
+                }
+                // return;
+            }
+
+
+        }
     }
 
 }

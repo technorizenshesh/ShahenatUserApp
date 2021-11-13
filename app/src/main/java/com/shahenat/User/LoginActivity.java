@@ -97,12 +97,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     //FaceBook
     CallbackManager mCallbackManager;
     LoginButton loginButton;
-    ShahenatInterface shahenatInterfaceInterface;
+    ShahenatInterface apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        shahenatInterfaceInterface = ApiClient.getClient().create(ShahenatInterface.class);
+        apiInterface = ApiClient.getClient().create(ShahenatInterface.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login2);
 
         Type = SessionManager.readString(LoginActivity.this,Constant.KEY_Login_type,"");
@@ -228,19 +228,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
-        binding.loginID.setOnClickListener(v -> {
-
-            Validation();
-
-           /* if(Type.equalsIgnoreCase("Driver"))
-            {
-                Validation();
-
-            }else
-            {
-                Validation();
-            }*/
-        });
+        binding.loginID.setOnClickListener(v -> { Validation(); });
     }
 
 
@@ -321,7 +309,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         map.put("lon", longitude);
         map.put("register_id", token);
         Log.e(TAG, "Login Request :" + map);
-        Call<LoginModel> call = shahenatInterfaceInterface.login(map);
+        Call<LoginModel> call = apiInterface.login(map);
         call.enqueue(new Callback<LoginModel>() {
             @Override
             public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -335,7 +323,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         // Preference.save(LoginActivity.this,Preference.KEY_USER_ID,finallyPr.result.id);
                         SessionManager.writeString(LoginActivity.this, Constant.USER_INFO, responseString);
                         Toast.makeText(LoginActivity.this, getString(R.string.sign_in_successful), Toast.LENGTH_SHORT).show();
-                        if (finallyPr.result.type.equalsIgnoreCase("USER"))
+                        if (finallyPr.result.type.equalsIgnoreCase("User"))
                             startActivity(new Intent(LoginActivity.this, HomeActiivity.class));
                         else
                        /* Preference.save(LoginActivity.this,Preference.KEY_User_name,finallyPr.result.firstName);
@@ -370,7 +358,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private void ApISignUpMehod(String LoginType) {
         DataManager.getInstance().showProgressMessage(LoginActivity.this, getString(R.string.please_wait));
-        Call<LoginModel> call = shahenatInterfaceInterface.social_login(Socilal_FirstName, Socilal_last_name, Socilal_email, Socilal_mobile, Socilal_city, Socilal_address, Socilal_address2, token, latitude, longitude, LoginType, social_id, social_image);
+        Call<LoginModel> call = apiInterface.social_login(Socilal_FirstName, Socilal_last_name, Socilal_email, Socilal_mobile, Socilal_city, Socilal_address, Socilal_address2, token, latitude, longitude, LoginType, social_id, social_image);
         call.enqueue(new Callback<LoginModel>() {
             @Override
             public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {

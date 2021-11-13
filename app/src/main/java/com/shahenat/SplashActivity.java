@@ -75,7 +75,7 @@ public class SplashActivity extends AppCompatActivity {
                         DataManager.getInstance().getUserData(getApplicationContext()).result != null &&
                         !DataManager.getInstance().getUserData(getApplicationContext())
                                 .result.id.equalsIgnoreCase("")) {
-                       if(DataManager.getInstance().getUserData(SplashActivity.this).result.type.equals("USER")){
+                       if(DataManager.getInstance().getUserData(SplashActivity.this).result.type.equals("User")){
                            startActivity(new Intent(SplashActivity.this, HomeActiivity.class));
                            finish();
                        }

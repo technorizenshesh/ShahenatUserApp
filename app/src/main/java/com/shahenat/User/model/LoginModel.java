@@ -37,9 +37,9 @@ public class LoginModel {
         @SerializedName("last_name")
         @Expose
         public String lastName;
-        @SerializedName("phone_code")
+        @SerializedName("country_code")
         @Expose
-        public String phoneCode;
+        public String countryCode;
         @SerializedName("mobile")
         @Expose
         public String mobile;
@@ -55,7 +55,7 @@ public class LoginModel {
         @SerializedName("social_id")
         @Expose
         public String socialId;
-        @SerializedName("address")
+       /* @SerializedName("address")
         @Expose
         public String address;
         @SerializedName("address2")
@@ -66,7 +66,7 @@ public class LoginModel {
         public String lat;
         @SerializedName("lon")
         @Expose
-        public String lon;
+        public String lon;*/
         @SerializedName("register_id")
         @Expose
         public String registerId;
@@ -79,7 +79,7 @@ public class LoginModel {
         @SerializedName("date_time")
         @Expose
         public String dateTime;
-        @SerializedName("country")
+       /* @SerializedName("country")
         @Expose
         public String country;
         @SerializedName("state")
@@ -87,7 +87,7 @@ public class LoginModel {
         public String state;
         @SerializedName("city")
         @Expose
-        public String city;
+        public String city;*/
         @SerializedName("online_status")
         @Expose
         public String onlineStatus;

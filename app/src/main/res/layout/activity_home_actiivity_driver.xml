@@ -44,11 +44,12 @@
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
                 >
-                <ImageView
-                    android:src="@drawable/user"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/userImgg"
+                    android:src="@drawable/user_default"
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp">
-                </ImageView>
+                </de.hdodenhof.circleimageview.CircleImageView>
 
             </androidx.cardview.widget.CardView>
 
@@ -63,6 +64,7 @@
                 >
 
                 <TextView
+                    android:id="@+id/tvName"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -72,16 +74,19 @@
                     android:textSize="@dimen/_14sdp" />
 
                 <TextView
+                    android:id="@+id/tvNumber"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="A257GHSY"
                     android:textColor="@color/gra"
-                    android:textSize="@dimen/_12sdp" />
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
             <Switch
+                android:id="@+id/switchOnOff"
                 android:padding="@dimen/_10sdp"
                 android:text="Online"
                 android:layout_marginRight="@dimen/_10sdp"
