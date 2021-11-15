@@ -8,16 +8,20 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.shahenat.R;
 import com.shahenat.User.model.DetailsModel;
 import com.shahenat.databinding.ActivityAvaliviltyDetailsBinding;
 import com.shahenat.retrofit.ApiClient;
+import com.shahenat.retrofit.Constant;
 import com.shahenat.retrofit.ShahenatInterface;
 import com.shahenat.utils.DataManager;
 import com.shahenat.utils.NetworkAvailablity;
@@ -28,12 +32,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AvaliviltyDetails extends AppCompatActivity {
-
+    public String TAG = "AvaliviltyDetails";
     ActivityAvaliviltyDetailsBinding binding;
     private View promptsView;
     private AlertDialog alertDialog;
 
-    private SessionManager sessionManager;
+    DetailsModel finallyPr;
     ShahenatInterface shahenatInterfaceInterface;
 
     @Override
@@ -50,7 +54,7 @@ public class AvaliviltyDetails extends AppCompatActivity {
 
         binding.txtNegotiate.setOnClickListener(v -> {
 
-            AlertDaliogArea();
+            AlertDaliogArea(finallyPr);
 
         });
 
@@ -69,7 +73,7 @@ public class AvaliviltyDetails extends AppCompatActivity {
     }
 
 
-    private void AlertDaliogArea() {
+    private void AlertDaliogArea(DetailsModel model) {
 
         LayoutInflater li;
         ImageView imgCross;
@@ -77,8 +81,23 @@ public class AvaliviltyDetails extends AppCompatActivity {
         li = LayoutInflater.from(AvaliviltyDetails.this);
         promptsView = li.inflate(R.layout.alert_negosiate, null);
         imgCross = (ImageView) promptsView.findViewById(R.id.imgCross);
+        TextView tvTotalAmt = (TextView) promptsView.findViewById(R.id.tvTotalAmt);
+        TextView tvAmt1 = (TextView) promptsView.findViewById(R.id.tvAmt1);
+        TextView tvAmt2 = (TextView) promptsView.findViewById(R.id.tvAmt2);
+        TextView tvMyAmt1 = (TextView) promptsView.findViewById(R.id.tvMyAmt1);
+        TextView tvMyAmt2 = (TextView) promptsView.findViewById(R.id.tvMyAmt2);
+
         alertDialogBuilder = new AlertDialog.Builder(AvaliviltyDetails.this);
         alertDialogBuilder.setView(promptsView);
+
+
+        tvTotalAmt.setText(String.format("%.2f", Double.parseDouble(model.getResult().getPriceKm())));
+        tvAmt1.setText(String.format("%.2f", Double.parseDouble(model.getResult().getPriceKm())));
+        tvAmt2.setText(String.format("%.2f",Double.parseDouble(model.getResult().getPriceKm())));
+        tvMyAmt1.setText(String.format("%.2f", Double.parseDouble(model.getResult().getPriceKm())));
+        tvMyAmt2.setText(String.format("%.2f",Double.parseDouble(model.getResult().getPriceKm())));
+
+
 
         imgCross.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +115,8 @@ public class AvaliviltyDetails extends AppCompatActivity {
 
     private void getAvailableEuimentMethod() {
         DataManager.getInstance().showProgressMessage(AvaliviltyDetails.this, getString(R.string.please_wait));
-        String id = DataManager.getInstance().getUserData(AvaliviltyDetails.this).result.id;
+        String id = SessionManager.readString(AvaliviltyDetails.this, Constant.KEY_avail_id, "");
+
 
         Call<DetailsModel> call = shahenatInterfaceInterface.get_avalable_equipment_details(id);
         call.enqueue(new Callback<DetailsModel>() {
@@ -105,17 +125,16 @@ public class AvaliviltyDetails extends AppCompatActivity {
 
                 DataManager.getInstance().hideProgressMessage();
                 try {
-                    DetailsModel finallyPr = response.body();
-                    String status = finallyPr.getStatus();
-                    String Message = finallyPr.getMessage();
-
-                    if (status.equalsIgnoreCase("1")) {
+                     finallyPr = response.body();
+                    String responseString = new Gson().toJson(response.body());
+                    Log.e(TAG, "Availivility Response :" + responseString);
+                    if (finallyPr.getStatus().equalsIgnoreCase("1")) {
 
                         if (finallyPr.getResult().getVehicleImage() != null) {
                             Glide.with(AvaliviltyDetails.this).load(finallyPr.getResult().getVehicleImage()).placeholder(R.drawable.buldozer)
                                     .into(binding.img);
                         }
-
+                        binding.txtTool.setText(finallyPr.getResult().getEquipmentName());
                         binding.txtEquimentName.setText(finallyPr.getResult().getEquipmentName());
                         binding.txtPrice.setText(finallyPr.getResult().getPriceKm());
                         binding.txtDescription.setText(finallyPr.getResult().getDescription());

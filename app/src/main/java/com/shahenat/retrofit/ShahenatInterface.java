@@ -101,20 +101,7 @@ public interface ShahenatInterface {
 
   @FormUrlEncoded
     @POST(get_schedule_ride)
-    Call<ScheduleRide> get_schedule_ride(
-            @Field("user_id") String user_id,
-            @Field("type") String type,
-            @Field("from_date") String from_date,
-            @Field("to_date") String to_date,
-            @Field("from_time") String from_time,
-            @Field("no_vehicle") String no_vehicle,
-            @Field("from_address") String from_address,
-            @Field("from_lat") String from_lat,
-            @Field("from_lon") String from_lon,
-            @Field("to_address") String to_address,
-            @Field("to_lat") String to_lat,
-            @Field("to_lon") String to_lon
-    );
+    Call<ScheduleRide> get_schedule_ride(@FieldMap Map<String, String> params);
 
     @Multipart
     @POST(driver_signup)

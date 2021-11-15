@@ -415,17 +415,17 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
                     GetPriceModel finallyPr = response.body();
                     String responseString = new Gson().toJson(response.body());
                     Log.e(TAG, "GetNearBY Deriver Response :" + responseString);
-                    String status = finallyPr.getStatus();
-                    String Message = finallyPr.getMessage();
 
-                    if (status.equalsIgnoreCase("1")) {
+                    if (finallyPr.getStatus().equalsIgnoreCase("1")) {
+                        modelList.clear();
+                        modelList.addAll(finallyPr.getResult());
 
                         // String EstTime = String.valueOf(finallyPr.getResult().get(0).getEstimateTime());
 
                         //  binding.txtTime.setText(EstTime+" min");
 
 
-                        modelList = (ArrayList<GetPriceModelData>) finallyPr.getResult();
+                      //  modelList = (ArrayList<GetPriceModelData>) finallyPr.getResult();
 
                         if (!modelList.isEmpty()) {
                             DriverId = modelList.get(0).getDriverId().toString();
@@ -478,13 +478,10 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 try {
                     SameDayBookingModel finallyPr = response.body();
-                    String status = finallyPr.getStatus();
-                    String Message = finallyPr.getMessage();
 
-                    if (status.equalsIgnoreCase("1")) {
 
+                    if (finallyPr.getStatus().equalsIgnoreCase("1")) {
                         AlertDaliogArea();
-
                         Toast.makeText(RideActivity.this, "Success..Booking", Toast.LENGTH_SHORT).show();
 
                     } else {

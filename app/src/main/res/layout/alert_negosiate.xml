@@ -19,18 +19,43 @@
             android:layout_height="@dimen/_30sdp"
             >
 
-            <TextView
-                android:layout_centerInParent="true"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textColor="@color/black_new"
-                android:textSize="@dimen/_16sdp"
-                android:text="Total Amount $ 140"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_centerInParent="true"
+              android:gravity="center_horizontal">
+              <TextView
+                  android:id="@+id/tvTotal"
+                  android:textStyle="bold"
+                  android:layout_gravity="center"
+                  android:textColor="@color/black_new"
+                  android:textSize="@dimen/_16sdp"
+                  android:text="Total Amount"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  />
 
-            </TextView>
+
+
+              <TextView
+                  android:id="@+id/tvTotalAmt"
+                  android:layout_toRightOf="@+id/tvTotal"
+                  android:layout_centerInParent="true"
+                  android:textStyle="bold"
+                  android:drawableLeft="@drawable/doloer"
+                  android:layout_marginLeft="@dimen/_10sdp"
+                  android:drawablePadding="@dimen/_2sdp"
+                  android:layout_gravity="center"
+                  android:textColor="@color/black_new"
+                  android:textSize="@dimen/_16sdp"
+                  android:text="140"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  />
+
+          </LinearLayout>
+
+
 
             <ImageView
                 android:id="@+id/imgCross"
@@ -95,10 +120,13 @@
                 >
 
                 <TextView
+                    android:id="@+id/tvAmt1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="$135"
+                    android:drawableLeft="@drawable/doloer"
+                    android:drawablePadding="@dimen/_2sdp"
+                    android:text="135"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
                     >
@@ -107,10 +135,13 @@
 
 
                 <TextView
+                    android:id="@+id/tvMyAmt1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="$128"
+                    android:text="128"
+                    android:drawableLeft="@drawable/doloer"
+                    android:drawablePadding="@dimen/_2sdp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
                     >
@@ -128,10 +159,13 @@
                 >
 
                 <TextView
+                    android:id="@+id/tvAmt2"
                     android:layout_alignParentLeft="true"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
-                    android:text="$130"
+                    android:text="130"
+                    android:drawableLeft="@drawable/doloer"
+                    android:drawablePadding="@dimen/_2sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     >
@@ -140,10 +174,13 @@
 
 
                 <TextView
+                    android:id="@+id/tvMyAmt2"
                     android:layout_alignParentRight="true"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp"
-                    android:text="$128"
+                    android:text="128"
+                    android:drawableLeft="@drawable/doloer"
+                    android:drawablePadding="@dimen/_2sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     >

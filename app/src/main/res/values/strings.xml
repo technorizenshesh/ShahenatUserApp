@@ -133,6 +133,7 @@
     <string name="enter_new_password">Enter new password.</string>
     <string name="enter_confirm_password">Enter confirm password.</string>
     <string name="password_does_not_matched">Password doesn\'t matched</string>
+    <string name="no_driver_available_in_this_area">No driver available in this area</string>
 
 
 </resources>
