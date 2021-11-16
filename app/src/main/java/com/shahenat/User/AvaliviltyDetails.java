@@ -27,6 +27,9 @@ import com.shahenat.utils.DataManager;
 import com.shahenat.utils.NetworkAvailablity;
 import com.shahenat.utils.SessionManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,7 +39,7 @@ public class AvaliviltyDetails extends AppCompatActivity {
     ActivityAvaliviltyDetailsBinding binding;
     private View promptsView;
     private AlertDialog alertDialog;
-
+    String Type_id = "",FromDate="",ToDates="",from_time="",PickUp_address="",PicUp_latitude="",PicUp_longitude="",DropUp_address="",DropUp_latitude="",DropUp_longitude="",No_Vechcli = "",negotiaion_amount="";
     DetailsModel finallyPr;
     ShahenatInterface shahenatInterfaceInterface;
 
@@ -60,9 +63,27 @@ public class AvaliviltyDetails extends AppCompatActivity {
 
         binding.txtNext.setOnClickListener(v -> {
 
-            startActivity(new Intent(AvaliviltyDetails.this, ArrivingActivity.class));
+           // startActivity(new Intent(AvaliviltyDetails.this, ArrivingActivity.class));
+
+            if (NetworkAvailablity.checkNetworkStatus(AvaliviltyDetails.this))
+                sendBookingSchedule();
+            else Toast.makeText(this, R.string.checkInternet, Toast.LENGTH_SHORT).show();
 
         });
+
+        if (getIntent() != null) {
+            Type_id = getIntent().getStringExtra("Type_id");
+            FromDate = getIntent().getStringExtra("FromDate");
+            ToDates = getIntent().getStringExtra("ToDates");
+            from_time = getIntent().getStringExtra("from_time");
+            PickUp_address = getIntent().getStringExtra("PickUp_address");
+            PicUp_latitude = getIntent().getStringExtra("PicUp_latitude");
+            PicUp_longitude = getIntent().getStringExtra("PicUp_longitude");
+            DropUp_address = getIntent().getStringExtra("DropUp_address");
+            DropUp_latitude = getIntent().getStringExtra("DropUp_latitude");
+            DropUp_longitude = getIntent().getStringExtra("DropUp_longitude");
+            No_Vechcli = getIntent().getStringExtra("No_Vechcli");
+        }
 
 
         if (NetworkAvailablity.checkNetworkStatus(AvaliviltyDetails.this))
@@ -116,8 +137,6 @@ public class AvaliviltyDetails extends AppCompatActivity {
     private void getAvailableEuimentMethod() {
         DataManager.getInstance().showProgressMessage(AvaliviltyDetails.this, getString(R.string.please_wait));
         String id = SessionManager.readString(AvaliviltyDetails.this, Constant.KEY_avail_id, "");
-
-
         Call<DetailsModel> call = shahenatInterfaceInterface.get_avalable_equipment_details(id);
         call.enqueue(new Callback<DetailsModel>() {
             @Override
@@ -159,6 +178,59 @@ public class AvaliviltyDetails extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<DetailsModel> call, Throwable t) {
+                call.cancel();
+                DataManager.getInstance().hideProgressMessage();
+            }
+        });
+    }
+
+
+    public void sendBookingSchedule() {
+        DataManager.getInstance().showProgressMessage(AvaliviltyDetails.this, getString(R.string.please_wait));
+        String User_id = DataManager.getInstance().getUserData(AvaliviltyDetails.this).result.id;
+        Map<String, String> map = new HashMap<>();
+        map.put("user_id", User_id);
+        map.put("negotiation_amount", negotiaion_amount);
+        map.put("driver_id", SessionManager.readString(AvaliviltyDetails.this, Constant.KEY_DRIVER_ID, ""));
+        map.put("vehicle_id",SessionManager.readString(AvaliviltyDetails.this, Constant.KEY_avail_id, "") );
+        map.put("pickup_add",PickUp_address );
+        map.put("p_lat", PicUp_latitude);
+        map.put("p_lon", PicUp_longitude);
+        map.put("drop_add", DropUp_address);
+        map.put("d_lat", DropUp_latitude);
+        map.put("d_lon", DropUp_longitude);
+        map.put("from_date",FromDate );
+        map.put("to_date", ToDates);
+        map.put("from_time",from_time);
+        map.put("payment_type","Cash");
+        Log.e(TAG, "Schedule Booking Request :" + map);
+        Call<Map<String, String>> call = shahenatInterfaceInterface.sendScheduleBooking(map);
+        call.enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+
+                DataManager.getInstance().hideProgressMessage();
+                try {
+                    Map<String,String> data = response.body();
+                    String responseString = new Gson().toJson(response.body());
+                    Log.e(TAG, "Schedule Booking Response :" + responseString);
+                    if(data.get("status").equals("1")){
+                        Toast.makeText(AvaliviltyDetails.this, getString(R.string.booking_send_successfully), Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AvaliviltyDetails.this,HomeActiivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        finish();
+                    }
+                    else  if(data.get("status").equals("0")){
+                        Toast.makeText(AvaliviltyDetails.this, data.get("message"), Toast.LENGTH_SHORT).show();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<Map<String,String>> call, Throwable t) {
                 call.cancel();
                 DataManager.getInstance().hideProgressMessage();
             }

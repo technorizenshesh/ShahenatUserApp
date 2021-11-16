@@ -38,21 +38,7 @@ public class AvailabilityActivity extends AppCompatActivity {
     ActivityAvailabilityBinding binding;
     private ArrayList<ScheduleRide.Result> modelList = new ArrayList<>();
     AvalibilityAdapter mAdapter;
-
-    String Type_id = "";
-    String FromDate = "";
-    String ToDates = "";
-    String from_time = "";
-
-    String PickUp_address = "";
-    String PicUp_latitude = "";
-    String PicUp_longitude = "";
-
-    String DropUp_address = "";
-    String DropUp_latitude = "";
-    String DropUp_longitude = "";
-
-    String No_Vechcli = "";
+    String Type_id = "",FromDate="",ToDates="",from_time="",PickUp_address="",PicUp_latitude="",PicUp_longitude="",DropUp_address="",DropUp_latitude="",DropUp_longitude="",No_Vechcli = "";
     ShahenatInterface shahenatInterfaceInterface;
 
     @Override
@@ -99,7 +85,19 @@ public class AvailabilityActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position, ScheduleRide.Result model) {
                 SessionManager.writeString(AvailabilityActivity.this, Constant.KEY_avail_id, model.getId());
-                startActivity(new Intent(AvailabilityActivity.this, AvaliviltyDetails.class));
+                SessionManager.writeString(AvailabilityActivity.this, Constant.KEY_DRIVER_ID, model.getDriverId());
+                startActivity(new Intent(AvailabilityActivity.this, AvaliviltyDetails.class)
+                .putExtra("Type_id",Type_id)
+                .putExtra("FromDate",FromDate)
+                .putExtra("ToDates",ToDates)
+                .putExtra("from_time",from_time)
+                .putExtra("PickUp_address",PickUp_address)
+                .putExtra("PicUp_latitude",PicUp_latitude)
+                .putExtra("PicUp_longitude",PicUp_longitude)
+                .putExtra("DropUp_address",DropUp_address)
+                .putExtra("DropUp_latitude",DropUp_latitude)
+                .putExtra("DropUp_longitude",DropUp_longitude)
+                .putExtra("No_Vechcli","1"));
 
             }
         });

@@ -227,4 +227,13 @@ public interface ShahenatInterface {
     @POST("update_online_status")
     Call<Map<String, String>> updateStatus(@FieldMap Map<String, String> params);
 
+
+
+
+
+
+    @FormUrlEncoded
+    @POST("booking_schedule")
+    Call<Map<String,String>> sendScheduleBooking(@FieldMap Map<String, String> params);
+
 }

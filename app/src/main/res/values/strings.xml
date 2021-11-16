@@ -134,6 +134,7 @@
     <string name="enter_confirm_password">Enter confirm password.</string>
     <string name="password_does_not_matched">Password doesn\'t matched</string>
     <string name="no_driver_available_in_this_area">No driver available in this area</string>
+    <string name="booking_send_successfully">Booking Request send successfully</string>
 
 
 </resources>
