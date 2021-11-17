@@ -136,5 +136,21 @@
     <string name="no_driver_available_in_this_area">No driver available in this area</string>
     <string name="booking_send_successfully">Booking Request send successfully</string>
 
+    <string name="race_ask">Race ask</string>
+    <string name="location_of_taken_in_charge">location of taken in charge</string>
+    <string name="destination_address">Destination address</string>
+    <string name="completed">Completed</string>
+    <string name="fare">Fare</string>
+
+    <string name="new_booking_request">New Booking Request</string>
+    <string name="new_chat_msg_user">New Chat Message from User</string>
+    <string name="booking_cancel_by_user">Booking cancel by user</string>
+
+    <string name="booking_accept_by_driver">Booking Accepted By Driver.</string>
+    <string name="driver_start_the_race">Driver has started the race.</string>
+    <string name="driver_finish_race">Driver has finished the race.</string>
+    <string name="new_msg_from_driver">New Chat Message from Driver.</string>
+    <string name="booking_cancel_by_driver">Booking cancel by driver.</string>
+    <string name="pay_in">Pay in</string>
 
 </resources>

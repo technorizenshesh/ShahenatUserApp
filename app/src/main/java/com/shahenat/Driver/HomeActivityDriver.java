@@ -9,7 +9,10 @@ import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -33,9 +36,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.shahenat.ChosseLoginActivity;
+import com.shahenat.Driver.dialog.NewRequestDialog;
 import com.shahenat.Driver.services.MyService;
 import com.shahenat.GPSTracker;
 import com.shahenat.R;
+import com.shahenat.User.HomeActiivity;
 import com.shahenat.User.model.LoginModel;
 import com.shahenat.databinding.ActivityHomeDriverBinding;
 import com.shahenat.retrofit.ApiClient;
@@ -45,6 +50,8 @@ import com.shahenat.utils.DataManager;
 import com.shahenat.utils.NetworkAvailablity;
 import com.shahenat.utils.SessionManager;
 import com.skyfishjy.library.RippleBackground;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +74,29 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
     public Activity activity;
     ShahenatInterface apiInterface;
     LoginModel loginModel;
+
+    BroadcastReceiver JobStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("Dialog Open ====","=====");
+            try {
+                JSONObject object = new JSONObject(intent.getStringExtra("object"));
+                if(intent.getStringExtra("object")!= null) {
+                    Log.e("Dialog Open11111 ====","=====");
+                    if(object.get("status").equals("Cancel_by_user")){
+                        NewRequestDialog.getInstance().stopCountDownTimer();
+                    } else {
+                        NewRequestDialog.getInstance().Request(HomeActivityDriver.this, intent.getStringExtra("object"));
+                    } }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -295,6 +325,7 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceiver(JobStatusReceiver, new IntentFilter("Job_Status_Action1"));
         ContextCompat.startForegroundService(getApplicationContext(),new Intent(HomeActivityDriver.this, MyService.class));
         setUserInfo();
     }
@@ -302,8 +333,11 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(JobStatusReceiver);
         stopService(new Intent(this, MyService.class));
     }
+
+
 
     private void changeStatus(String id, String status) {
         Map<String,String> map = new HashMap<>();

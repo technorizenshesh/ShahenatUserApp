@@ -22,7 +22,8 @@
     <color name="green_pur">#21b4aa</color>
 
     <color name="blue_color">#87C2EE</color>
-
+    <color name="color_gray_100">#F7F8F9</color>
+    <color name="btn_green_color">#1C9A97 </color>
 
 
 </resources>

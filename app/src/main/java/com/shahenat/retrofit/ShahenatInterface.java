@@ -1,6 +1,7 @@
 package com.shahenat.retrofit;
 
 
+import com.shahenat.User.model.BookingDetailModel;
 import com.shahenat.User.model.DetailsModel;
 import com.shahenat.User.model.EquimentModelAvalaible;
 import com.shahenat.User.model.GetPriceModel;
@@ -136,9 +137,9 @@ public interface ShahenatInterface {
 
     @FormUrlEncoded
     @POST(same_day_booking)
-    Call<SameDayBookingModel> same_day_booking(
+    Call<Map<String,String>> same_day_booking(
             @Field("user_id") String user_id,
-            @Field("driver_id") String driver_id,
+            @Field("equipment_id") String equipment_id,
             @Field("vehicle_id") String vehicle_id,
             @Field("pickup_add") String pickup_add,
             @Field("p_lat") String p_lat,
@@ -227,13 +228,17 @@ public interface ShahenatInterface {
     @POST("update_online_status")
     Call<Map<String, String>> updateStatus(@FieldMap Map<String, String> params);
 
-
-
-
-
-
     @FormUrlEncoded
     @POST("booking_schedule")
     Call<Map<String,String>> sendScheduleBooking(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("user_cancel_request")
+    Call<BookingDetailModel> rideUserCancel(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("driver_accept_and_Cancel_request")
+    Call<BookingDetailModel> acceptCancelRequest(@FieldMap Map<String, String> params);
+
 
 }

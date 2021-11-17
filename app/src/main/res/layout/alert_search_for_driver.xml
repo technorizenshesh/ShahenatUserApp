@@ -23,7 +23,7 @@
         </ImageView>
 
         <com.skyfishjy.library.RippleBackground
-            android:id="@+id/ripple"
+            android:id="@+id/rippleDriver"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:shadowColor="@color/white"

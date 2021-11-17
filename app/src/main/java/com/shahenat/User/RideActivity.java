@@ -8,17 +8,24 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -41,6 +48,7 @@ import com.shahenat.MapRelated.DrawPollyLine;
 import com.shahenat.R;
 import com.shahenat.RideClickListener;
 import com.shahenat.User.adapter.NearByAvaiableAdapter;
+import com.shahenat.User.model.BookingDetailModel;
 import com.shahenat.User.model.GetPriceModel;
 import com.shahenat.User.model.GetPriceModelData;
 import com.shahenat.User.model.SameDayBookingModel;
@@ -62,53 +70,60 @@ import retrofit2.Response;
 import retrofit2.http.Field;
 
 public class RideActivity extends AppCompatActivity implements OnMapReadyCallback, RideClickListener {
-    public String TAG = "RideActivity";
+    public static String TAG = "RideActivity";
     ActivityRideBinding binding;
-
+    public static Context context;
+    public static RippleBackground rippleBackground;
     GPSTracker gpsTracker;
-    double latitude = 0;
-    double longitude = 0;
     private GoogleMap mMap;
-
     private ArrayList<GetPriceModelData> modelList = new ArrayList<>();
     NearByAvaiableAdapter mAdapter;
-    String ProductName = "";
 
     private View promptsView;
     private AlertDialog alertDialog;
-
-    String PaymentType = "";
-
-
     LatLng PickUpLatLng, DropOffLatLng;
     MarkerOptions PicUpMarker, DropOffMarker, carMarker1;
     public static boolean run = true;
     private PolylineOptions lineOptions;
-
-    double PicUp_latitude = 0;
-    double PicUp_longitude = 0;
-
-    double Droplatitude = 0;
-    double Droplongitude = 0;
-
+    public static double latitude = 0.0,longitude = 0.0, PicUp_latitude = 0.0,PicUp_longitude = 0.0,Droplatitude = 0.0,Droplongitude = 0.0;
+   public static String VechleId = "",DriverId = "",EstemateTime = "",EstematePrice = "",EstemateDistance = "",PickupAddress = "",DropAddress = "",PaymentType = "";
     int PERMISSION_ID = 44;
-    private SessionManager sessionManager;
-
-    String VechleId = "";
-    String DriverId = "";
-    String EstemateTime = "";
-    String EstematePrice = "";
-    String EstemateDistance = "";
-
     ArrayList<Marker> markers = new ArrayList<Marker>();
+   public static ShahenatInterface shahenatInterfaceInterface;
+    public static CountDownTimer countDownTimer;
+    public static String countChk111 = "false" ,request_id = "", requestStatus = "";
+    public static int count = 1;
 
-    String PickupAddress = "";
-    String DropAddress = "";
-    ShahenatInterface shahenatInterfaceInterface;
+
+    BroadcastReceiver JobStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getStringExtra("request_id") != null) {
+                request_id = intent.getStringExtra("request_id");
+                requestStatus = intent.getStringExtra("status");
+                if (intent.getStringExtra("status").equals("Accept")) {
+
+                    rippleBackground.stopRippleAnimation();
+                    // run = false;
+                    countDownTimer.onFinish();
+                    context.startActivity(new Intent(context, ArrivingActivity.class));
+                    ((Activity) context).finish();
+                }
+                /*else if(intent.getStringExtra("status").equals("Cancel")){
+                    rippleBackground.stopRippleAnimation();
+                    countDownTimer.cancel();
+                    context.startActivity(new Intent(context, HomeAct.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    ((Activity) context).finish();
+                }*/
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = RideActivity.this;
         shahenatInterfaceInterface = ApiClient.getClient().create(ShahenatInterface.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_ride);
         Intent intent1 = getIntent();
@@ -275,49 +290,13 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         mAdapter.SetOnItemClickListener(new NearByAvaiableAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, GetPriceModelData model) {
-
-
+              DriverId = modelList.get(position).getEquipmentId();
+                VechleId = modelList.get(position).getVehicleId();
             }
         });
     }
 
-    private void AlertDaliogArea() {
 
-        LayoutInflater li;
-        ImageView imgCross;
-        RippleBackground ripple;
-        AlertDialog.Builder alertDialogBuilder;
-        li = LayoutInflater.from(RideActivity.this);
-        promptsView = li.inflate(R.layout.alert_search_for_driver, null);
-        imgCross = (ImageView) promptsView.findViewById(R.id.imgCross);
-        ripple = (RippleBackground) promptsView.findViewById(R.id.ripple);
-        alertDialogBuilder = new AlertDialog.Builder(RideActivity.this, R.style.myFullscreenAlertDialogStyle);   //second argument
-        ripple.startRippleAnimation();
-        //alertDialogBuilder = new AlertDialog.Builder(RideActivity.this);
-        alertDialogBuilder.setView(promptsView);
-
-        imgCross.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                alertDialog.dismiss();
-            }
-        });
-
-      /*  new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                startActivity(new Intent(RideActivity.this,ArrivingActivity.class));
-
-            }
-        }, 4000);*/
-
-        alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-    }
 
 
     private void DrawPolyLine() {
@@ -428,7 +407,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
                       //  modelList = (ArrayList<GetPriceModelData>) finallyPr.getResult();
 
                         if (!modelList.isEmpty()) {
-                            DriverId = modelList.get(0).getDriverId().toString();
+                            DriverId = modelList.get(0).getEquipmentId().toString();
                             VechleId = modelList.get(0).getVehicleId().toString();
 
                             EstemateTime = modelList.get(0).getEstimateTime().toString();
@@ -458,35 +437,37 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void BookingRideMethod() {
-        DataManager.getInstance().showProgressMessage(RideActivity.this, getString(R.string.please_wait));
-        String User_id = DataManager.getInstance().getUserData(RideActivity.this).result.id;
+    public static void BookingRideMethod() {
+        DataManager.getInstance().showProgressMessage((Activity) context, context.getString(R.string.please_wait));
+        String User_id = DataManager.getInstance().getUserData(context).result.id;
         String PicUp_lat = String.valueOf(PicUp_latitude);
         String PicUp_long = String.valueOf(PicUp_longitude);
         String Drop_lat = String.valueOf(Droplatitude);
         String Drop_long = String.valueOf(Droplongitude);
 
-        Call<SameDayBookingModel> call = shahenatInterfaceInterface.same_day_booking(User_id, DriverId, VechleId,
+        Call<Map<String,String>> call = shahenatInterfaceInterface.same_day_booking(User_id, DriverId, VechleId,
                 PickupAddress, PicUp_lat, PicUp_long,
                 DropAddress, Drop_lat, Drop_long,
                 EstematePrice, EstemateDistance, "Cash");
-        call.enqueue(new Callback<SameDayBookingModel>() {
+        call.enqueue(new Callback<Map<String,String>>() {
             @Override
-            public void onResponse(Call<SameDayBookingModel> call, Response<SameDayBookingModel> response) {
+            public void onResponse(Call<Map<String,String>> call, Response<Map<String,String>> response) {
 
                 DataManager.getInstance().hideProgressMessage();
 
                 try {
-                    SameDayBookingModel finallyPr = response.body();
-
-
-                    if (finallyPr.getStatus().equalsIgnoreCase("1")) {
-                        AlertDaliogArea();
-                        Toast.makeText(RideActivity.this, "Success..Booking", Toast.LENGTH_SHORT).show();
+                    Map<String,String> finallyPr = response.body();
+                    String dataResponse = new Gson().toJson(response.body());
+                    Log.e(TAG, "Send New Booking Response after 40 second :" + dataResponse);
+                    if (finallyPr.get("status").equalsIgnoreCase("1")) {
+                       // AlertDaliogArea();
+                        request_id = finallyPr.get("request_id");
+                        SearchingDriverDialog();
+                        //
 
                     } else {
+                        Toast.makeText(context, finallyPr.get("message"), Toast.LENGTH_SHORT).show();
 
-                        DataManager.getInstance().hideProgressMessage();
                     }
 
                 } catch (Exception e) {
@@ -495,12 +476,178 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             @Override
-            public void onFailure(Call<SameDayBookingModel> call, Throwable t) {
+            public void onFailure(Call<Map<String,String>> call, Throwable t) {
                 call.cancel();
                 DataManager.getInstance().hideProgressMessage();
             }
         });
     }
 
+    private void AlertDaliogArea() {
+
+        LayoutInflater li;
+        ImageView imgCross;
+        RippleBackground ripple;
+        AlertDialog.Builder alertDialogBuilder;
+        li = LayoutInflater.from(RideActivity.this);
+        promptsView = li.inflate(R.layout.alert_search_for_driver, null);
+        imgCross = (ImageView) promptsView.findViewById(R.id.imgCross);
+        ripple = (RippleBackground) promptsView.findViewById(R.id.ripple);
+        alertDialogBuilder = new AlertDialog.Builder(RideActivity.this, R.style.myFullscreenAlertDialogStyle);   //second argument
+        ripple.startRippleAnimation();
+        //alertDialogBuilder = new AlertDialog.Builder(RideActivity.this);
+        alertDialogBuilder.setView(promptsView);
+
+        imgCross.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alertDialog.dismiss();
+            }
+        });
+
+      /*  new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                startActivity(new Intent(RideActivity.this,ArrivingActivity.class));
+
+            }
+        }, 4000);*/
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+    }
+
+
+
+
+    public static void SearchingDriverDialog() {
+        final Dialog dialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.alert_search_for_driver);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        rippleBackground = dialog.findViewById(R.id.rippleDriver);
+        ImageView imgCross = dialog.findViewById(R.id.imgCross);
+        rippleBackground.startRippleAnimation();
+
+        countDownTimer = new CountDownTimer(240000, 40000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.e("MilliseconTime===", millisUntilFinished + "");
+               /* if (millisUntilFinished % 40000 != 0) {
+                    if (countChk111.equals("false")) {
+                        if (NetworkAvailablity.checkNetworkStatus(context)) {
+                            Log.e("MilliseconTimePayment", countChk111 + "");
+                            BookingRideMethod();
+                            Log.e("MilliseconTime===", count + "");
+                        } else Toast.makeText(context, context.getString(R.string.checkInternet), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        countChk111 = "false";
+                        Log.e("MilliseconTimePayment", countChk111 + "");
+
+                    }
+                }*/
+
+            }
+
+            @Override
+            public void onFinish() {
+                rippleBackground.stopRippleAnimation();
+                if (!request_id.equals("")) {
+                    if (requestStatus.equals("Accept")) {
+                        context.startActivity(new Intent(context, ArrivingActivity.class));
+                        ((Activity) context).finish();
+                    } else {
+                        Toast.makeText(context, "No Driver Found", Toast.LENGTH_SHORT).show();
+                        context.startActivity(new Intent(context, HomeActiivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        ((Activity) context).finish();
+                    }
+                } else {
+                    Toast.makeText(context, "Driver cancel your booking request", Toast.LENGTH_SHORT).show();
+                    context.startActivity(new Intent(context, HomeActiivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    ((Activity) context).finish();
+                }
+                dialog.dismiss();
+
+            }
+        }.start();
+
+
+        imgCross.setOnClickListener(v -> {
+            if (NetworkAvailablity.checkNetworkStatus(context)) userCancelBooking();
+            else Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+        dialog.show();
+    }
+
+
+
+    public static void userCancelBooking() {
+        Map<String, String> map = new HashMap<>();
+        map.put("request_id", request_id);
+        map.put("status", "Cancel_by_user");
+        map.put("reason", "");
+        Log.e(TAG, "Cancel Request user Request :" + map);
+        Call<BookingDetailModel> callNearCar = shahenatInterfaceInterface.rideUserCancel(map);
+        callNearCar.enqueue(new Callback<BookingDetailModel>() {
+            @Override
+            public void onResponse(Call<BookingDetailModel> call, Response<BookingDetailModel> response) {
+
+                try {
+                    BookingDetailModel data = response.body();
+                    String dataResponse = new Gson().toJson(response.body());
+                    Log.e(TAG, "Cancel Request user Request :" + dataResponse);
+                    if (data.status.equals("1")) {
+                        rippleBackground.stopRippleAnimation();
+                        countDownTimer.cancel();
+                        context.startActivity(new Intent(context, HomeActiivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        ((Activity) context).finish();
+
+                    } else if (data.status.equals("0")) {
+                        // dialog.dismiss();
+
+                        //  App.showToast(context, data.get("message"), Toast.LENGTH_LONG);
+                        context.startActivity(new Intent(context, HomeActiivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        ((Activity) context).finish();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BookingDetailModel> call, Throwable t) {
+                DataManager.getInstance().hideProgressMessage();
+                call.cancel();
+            }
+        });
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        registerReceiver(JobStatusReceiver, new IntentFilter("Job_Status_Action"));
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(JobStatusReceiver);
+        if (countDownTimer != null)
+            countDownTimer.cancel();
+
+    }
 
 }
