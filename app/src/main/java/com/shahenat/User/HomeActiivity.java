@@ -316,6 +316,7 @@ public class HomeActiivity extends FragmentActivity implements OnMapReadyCallbac
         String loc = "";
         if (gpsTracker.canGetLocation()) {
             loc = getAddress(HomeActiivity.this, gpsTracker.getLatitude(), gpsTracker.getLongitude());
+            PickUp_address = loc;
         }
 
         Log.e("Location=====", loc);

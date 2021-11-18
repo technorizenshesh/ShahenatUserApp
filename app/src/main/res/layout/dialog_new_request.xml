@@ -160,6 +160,7 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:visibility="gone"
                 >
 
                 <TextView
@@ -193,16 +194,16 @@
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 >
 
                 <TextView
-                    android:gravity="center"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="@string/fare"
-                    android:textSize="@dimen/_12sdp"
                     android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
 
                     />
 
@@ -220,7 +221,7 @@
 
             </LinearLayout>
 
-          <!--  <LinearLayout
+            <LinearLayout
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -240,7 +241,7 @@
 
 
                 <TextView
-                    android:id="@+id/tvMinuts"
+                    android:id="@+id/tvMinut"
                     android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -250,7 +251,7 @@
                     />
 
 
-            </LinearLayout>-->
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="@dimen/_150sdp"

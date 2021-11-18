@@ -52,25 +52,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 object = new JSONObject(data.get("message"));
                 status = object.getString("status");
 
-                if(DataManager.getInstance().getUserData(getApplicationContext()).result.type.equals("User")){
-                    if (status.equals("Accept")) {
+                if(DataManager.getInstance().getUserData(getApplicationContext()).result.type.equals(object.getString("type"))){
+                    if (status.equals("Accepted")) {
 
-                    /*    SessionManager.writeString(getApplicationContext(), Constant.driver_id, object.getString("driver_id"));
+                        SessionManager.writeString(getApplicationContext(), Constant.driver_id, object.getString("driver_id"));
                         SessionManager.writeString(getApplicationContext(), Constant.request_id, object.getString("request_id"));
-                        SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
-                        SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));*/
+                       // SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
+                       // SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
                         title = getString(R.string.booking_accept_by_driver);
                         Intent intent1 = new Intent("Job_Status_Action");
                         intent1.putExtra("request_id", object.getString("request_id"));
                         intent1.putExtra("status", status);
                         sendBroadcast(intent1);
                     }
-                /*    else if (status.equals("Arrived")) {
+                  else if (status.equals("Arrive")) {
                         title = getString(R.string.driver_arrived_pickup_location);
                         SessionManager.writeString(getApplicationContext(), Constant.driver_id, object.getString("driver_id"));
                         SessionManager.writeString(getApplicationContext(), Constant.request_id, object.getString("request_id"));
-                        SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
-                        SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
+                  //      SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
+                 //       SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
                         Intent intent1 = new Intent("Job_Status_Action");
                         intent1.putExtra("request_id", object.getString("request_id"));
                         intent1.putExtra("status", status);
@@ -81,27 +81,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         title = getString(R.string.driver_start_the_race);
                         SessionManager.writeString(getApplicationContext(), Constant.driver_id, object.getString("driver_id"));
                         SessionManager.writeString(getApplicationContext(), Constant.request_id, object.getString("request_id"));
-                        SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
-                        SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
+                    //    SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
+                     //   SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
                         Intent intent1 = new Intent("Job_Status_Action");
                         intent1.putExtra("request_id", object.getString("request_id"));
                         intent1.putExtra("status", status);
                         sendBroadcast(intent1);
                     }
 
-                    else if (status.equals("Finish")) {
+                    else if (status.equals("Completed")) {
 
                         title = getString(R.string.driver_finish_race);
                         SessionManager.writeString(getApplicationContext(), Constant.driver_id, object.getString("driver_id"));
                         SessionManager.writeString(getApplicationContext(), Constant.request_id, object.getString("request_id"));
-                        SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
-                        SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
+                    //    SessionManager.writeString(getApplicationContext(), Constant.first_name, object.getString("driver_firstname"));
+                   //     SessionManager.writeString(getApplicationContext(), Constant.last_name, object.getString("driver_lastname"));
                         Intent intent1 = new Intent("Job_Status_Action");
                         intent1.putExtra("request_id", object.getString("request_id"));
                         intent1.putExtra("status", status);
                         sendBroadcast(intent1);
                     }
-
+ /*
                     else if (status.equals("chat")) {
                         key = object.getString("message");
                         title = getString(R.string.new_msg_from_driver);
@@ -111,7 +111,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         sendBroadcast(intent1);
                     }*/
 
-                    else if (status.equals("Cancel_by_driver")) {
+                    else if (status.equals("Rejected")) {
                         key = object.getString("key");
                         title = getString(R.string.booking_cancel_by_driver);
                         Intent intent1 = new Intent("Job_Status_Action");
@@ -161,11 +161,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                 }
 
-                if (DataManager.getInstance().getUserData(getApplicationContext()).result.type.equals("User")){
+                if (DataManager.getInstance().getUserData(getApplicationContext()).result.type.equals(object.getString("type"))){
                     wakeUpScreen();
                     displayCustomNotificationForOrdersUser(status, title, key);
                 }
-                else {
+                else if (DataManager.getInstance().getUserData(getApplicationContext()).result.type.equals(object.getString("type"))){
                     wakeUpScreen();
                     displayCustomNotificationForOrdersDriver(status, title, key);
 

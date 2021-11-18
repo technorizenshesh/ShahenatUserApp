@@ -152,5 +152,24 @@
     <string name="new_msg_from_driver">New Chat Message from Driver.</string>
     <string name="booking_cancel_by_driver">Booking cancel by driver.</string>
     <string name="pay_in">Pay in</string>
+    <string name="duration">Duration</string>
+
+    <string name="navigate">Navigate</string>
+    <string name="arrived">Arrived</string>
+    <string name="slide_to_begin_trip">Slide to begin Trip</string>
+    <string name="slide_to_end_trip">Slide to End Trip</string>
+    <string name="pick_up_passenger">Pick Up Passenger</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="destination">Destination</string>
+    <string name="are_you_sure_you_have_arrived_at_pickup_location_of_passenger">Are you sure you have arrived at pickup location of passenger?</string>
+    <string name="ok">Ok</string>
+    <string name="driver_arrived">Driver Arrived</string>
+    <string name="your_trip_has_begin">Your trip has begin</string>
+    <string name="your_trip_is_finished">Your trip is finished</string>
+    <string name="trip_start">Trip Start</string>
+    <string name="trip_end">Trip End</string>
+    <string name="driver_arrived_pickup_location">Driver has arrived on pickup location.</string>
+
 
 </resources>

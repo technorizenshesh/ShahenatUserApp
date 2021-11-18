@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout
+    android:id="@+id/RRtoolbar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_45sdp"
+    >
+
+    <ImageView
+        android:id="@+id/Imgback"
+        android:layout_margin="@dimen/_5sdp"
+        android:src="@drawable/arw_left"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        >
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arriving"
+        android:textColor="@color/black_new"
+        android:textSize="@dimen/_16sdp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>
+</layout>

@@ -22,4 +22,9 @@ public class Constant {
     public static String KEY_CircleName = "circleName";
     public static String KEY_CircleCode = "circleCode";
     public static String key_switch_shift_change = "key_switch_shift_change";
+
+
+    public static  String request_id = "request_id";
+
+    public static  String driver_id = "driver_id";
 }

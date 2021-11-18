@@ -1,7 +1,9 @@
 package com.shahenat.retrofit;
 
 
+import com.shahenat.Driver.Model.BookingDetailModelTwo;
 import com.shahenat.User.model.BookingDetailModel;
+import com.shahenat.User.model.BookingDetailModelOne;
 import com.shahenat.User.model.DetailsModel;
 import com.shahenat.User.model.EquimentModelAvalaible;
 import com.shahenat.User.model.GetPriceModel;
@@ -149,6 +151,9 @@ public interface ShahenatInterface {
             @Field("d_lon") String d_lon,
             @Field("total_price") String total_price,
             @Field("total_km") String total_km,
+            @Field("total_time") String total_time,
+            @Field("user_name") String user_name,
+            @Field("type") String type,
             @Field("payment_type") String payment_type
     );
 
@@ -239,6 +244,18 @@ public interface ShahenatInterface {
     @FormUrlEncoded
     @POST("driver_accept_and_Cancel_request")
     Call<BookingDetailModel> acceptCancelRequest(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("get_booking_details")
+    Call<BookingDetailModelOne>  bookingDetails(@FieldMap Map<String,String> params);
+
+    @FormUrlEncoded
+    @POST("get_latlon_driver")
+    Call<Map<String,String>>  getDriverLocation(@FieldMap Map<String,String> params);
+
+    @FormUrlEncoded
+    @POST("get_booking_details")
+    Call<BookingDetailModelTwo>  bookingDetailsDriver(@FieldMap Map<String,String> params);
 
 
 }

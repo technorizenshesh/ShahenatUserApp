@@ -101,7 +101,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (intent.getStringExtra("request_id") != null) {
                 request_id = intent.getStringExtra("request_id");
                 requestStatus = intent.getStringExtra("status");
-                if (intent.getStringExtra("status").equals("Accept")) {
+                if (intent.getStringExtra("status").equals("Accepted")) {
 
                     rippleBackground.stopRippleAnimation();
                     // run = false;
@@ -109,12 +109,12 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
                     context.startActivity(new Intent(context, ArrivingActivity.class));
                     ((Activity) context).finish();
                 }
-                /*else if(intent.getStringExtra("status").equals("Cancel")){
+                else if(intent.getStringExtra("status").equals("Rejected")){
                     rippleBackground.stopRippleAnimation();
                     countDownTimer.cancel();
-                    context.startActivity(new Intent(context, HomeAct.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    context.startActivity(new Intent(context, HomeActiivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     ((Activity) context).finish();
-                }*/
+                }
             }
         }
     };
@@ -448,7 +448,8 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         Call<Map<String,String>> call = shahenatInterfaceInterface.same_day_booking(User_id, DriverId, VechleId,
                 PickupAddress, PicUp_lat, PicUp_long,
                 DropAddress, Drop_lat, Drop_long,
-                EstematePrice, EstemateDistance, "Cash");
+                EstematePrice, EstemateDistance,EstemateTime,DataManager.getInstance().getUserData(context).result.firstName + " " +
+                        DataManager.getInstance().getUserData(context).result.firstName,"Driver", "Cash");
         call.enqueue(new Callback<Map<String,String>>() {
             @Override
             public void onResponse(Call<Map<String,String>> call, Response<Map<String,String>> response) {
@@ -595,6 +596,7 @@ public class RideActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.put("request_id", request_id);
         map.put("status", "Cancel_by_user");
         map.put("reason", "");
+        map.put("type", "Driver");
         Log.e(TAG, "Cancel Request user Request :" + map);
         Call<BookingDetailModel> callNearCar = shahenatInterfaceInterface.rideUserCancel(map);
         callNearCar.enqueue(new Callback<BookingDetailModel>() {

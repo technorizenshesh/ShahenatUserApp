@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true">
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/layout_header" />
+
+        <LinearLayout
+            android:id="@+id/llNavigate"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_below="@+id/header"
+            android:background="@drawable/white_green_bg"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".75"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_12sdp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".25">
+
+
+                <ImageView
+                    android:id="@+id/ivNavigate"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_marginLeft="@dimen/_35sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:src="@drawable/navigate_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivNavigate"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:text="@string/navigate"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_11sdp" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/llNavigate" />
+
+
+        <!-- layout for user-->
+        <RelativeLayout
+            android:id="@+id/rlUser"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_220sdp"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_33sdp"
+                android:background="@drawable/border_white_top"
+                android:clickable="true"
+                android:padding="@dimen/_15sdp">
+
+                <TextView
+                    android:id="@+id/tvCaraNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:text="HS785K"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_13sdp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvCaraNumber"
+                    android:layout_alignParentRight="true"
+                    android:text="Volkswagen Jetta"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="gone" />
+                <!--
+                            <TextView
+                                android:id="@+id/tvFinishTrip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/red"
+                                android:textSize="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:text="@string/finish_trip"
+                                android:layout_below="@id/tvCar"
+                                android:layout_alignParentRight="true"
+                                />
+                -->
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlDriver1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp">
+
+                <RelativeLayout
+                    android:id="@+id/rlDriverPropic"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:background="@drawable/circular_orange">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/ivUserPropic"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/user_default" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/rlDriverPropic"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text="Pratik"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp" />
+
+                <RatingBar
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvName"
+                    android:layout_centerHorizontal="true"
+                    android:progressTint="@color/btn_green_color"
+                    android:rating="4.0"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/btnLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/rlBottom">
+
+              <!--  <RelativeLayout
+                    android:id="@+id/ivCancel"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_cross_white" />
+                </RelativeLayout>-->
+
+                <RelativeLayout
+                    android:id="@+id/layoutforCall"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_alignParentBottom="true">
+
+                    <ImageView
+                        android:id="@+id/ic_call"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/call" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/ivCancel"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true">
+
+                    <ImageView
+                        android:id="@+id/image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:src="@mipmap/ic_cross_white" />
+
+                   <!-- <TextView
+                        android:id="@+id/tvCounter"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@drawable/small_red_circle"
+                        android:gravity="center"
+                        android:textColor="#ffffffff"
+                        android:textSize="@dimen/_12sdp"
+                        android:visibility="gone" />-->
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlBottom"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_alignParentBottom="true"
+                android:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnArrived"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/btn_green_color"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/arrived"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="visible" />
+
+
+                <RelativeLayout
+                    android:id="@+id/btnBegin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/btn_green_color"
+                    android:visibility="gone">
+
+                    <ng.max.slideview.SlideView
+                        android:id="@+id/slideViewBegin"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center_horizontal"
+                        app:sv_animateSlideText="true"
+                        app:sv_buttonBackgroundColor="@color/btn_green_color"
+                        app:sv_buttonImage="@drawable/slide_img"
+                        app:sv_buttonImageDisabled="@drawable/down_arrow"
+                        app:sv_reverseSlide="false"
+                        app:sv_slideBackgroundColor="@color/btn_green_color"
+                        app:sv_slideText="@string/slide_to_begin_trip"
+                        app:sv_slideTextColor="@color/white"
+                        app:sv_slideTextSize="16sp" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/btnEnd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/btn_green_color"
+                    android:visibility="gone">
+
+                    <ng.max.slideview.SlideView
+                        android:id="@+id/slideViewEnd"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center_horizontal"
+                        app:sv_animateSlideText="true"
+                        app:sv_buttonBackgroundColor="@color/btn_green_color"
+                        app:sv_buttonImage="@drawable/slide_img"
+                        app:sv_buttonImageDisabled="@drawable/down_arrow"
+                        app:sv_reverseSlide="false"
+                        app:sv_slideBackgroundColor="@color/btn_green_color"
+                        app:sv_slideText="@string/slide_to_end_trip"
+                        app:sv_slideTextColor="@color/white"
+                        app:sv_slideTextSize="16sp" />
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</layout>

@@ -161,14 +161,7 @@ public class HomeActivityDriver extends AppCompatActivity implements OnMapReadyC
 
 
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-               // navmenu();
-                AlertDaliogNotification();
 
-            }
-        },5000);
 
         binding.dashboard1.switchOnOff.setOnClickListener(v -> {
             if(binding.dashboard1.switchOnOff.isChecked()){

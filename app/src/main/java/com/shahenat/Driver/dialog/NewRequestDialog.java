@@ -87,15 +87,15 @@ public class NewRequestDialog {
             // {message={"car_type_id":"1","driver_id":"10","booktype":"NOW","shareride_type":null,"picuplocation":"indore","result":"successful","estimated_arrival_distance":"17123.34","estimated_arrival_time":"17123.34","dropofflocation":"bhopal","droplon":"77.4126","alert":"Booking request","user_id":"1","picklatertime":"08:00","droplat":"23.2599","picuplat":"22.7196","picklaterdate":"2021-02-21","request_id":10,"key":"New Booking Request","status":"Pending","pickuplon":"75.8577"}}
             Log.e("DialogChala====", "=======" + obj);
             object = new JSONObject(obj);
-            driver_id = String.valueOf(object.get("driver_id"));
-            request_id = String.valueOf(object.get("id"));
+            driver_id =   DataManager.getInstance().getUserData(context).result.id; //String.valueOf(object.get("driver_id"));
+            request_id = String.valueOf(object.get("request_id"));
             binding.tvPickupLoc.setText(object.getString("pickup_add"));
             binding.tvDestinationLoc.setText(object.getString("drop_add"));
             binding.tvFare.setText("       :       " + "€" + object.getString("total_price"));
          //   if(SessionManager.readString(context, Constant.LANGUAGE,"").equals("fr"))
-        //    binding.tvMinuts.setText("     :  " + object.getString("estimated_arrival_time") + " Mins");
+            binding.tvMinut.setText("     :  " + object.getString("total_time") + " Mins");
          //   else  binding.tvMinuts.setText("     :  " + object.getString("estimated_arrival_time") + " Minuts");
-          //  binding.tvText.setText(object.getString("user_name"));
+            binding.tvText.setText(object.getString("user_name"));
             binding.tvPayType.setText("     :  " + object.getString("payment_type"));
          //   binding.tvModel.setText("       :      " + object.getString("car_name"));
            // binding.ratingBar.setRating(Float.parseFloat(object.getString("rating")));
@@ -107,10 +107,10 @@ public class NewRequestDialog {
 
 
         binding.tvAccept.setOnClickListener(v -> {
-            AcceptCancel(context, driver_id, request_id, "Accept"/*"Pending"*/);
+            AcceptCancel(context, driver_id, request_id, "Accepted","User");
         });
         binding.tvRefuse.setOnClickListener(v -> {
-            AcceptCancel(context, driver_id, request_id, "Cancel");
+            AcceptCancel(context, driver_id, request_id, "Rejected","User");
         });
 
         startStop();
@@ -229,12 +229,13 @@ public class NewRequestDialog {
         return ms[1] + ":" + ms[2];
     }
 
-    public void AcceptCancel(Context context, String driver_id, String request_id, String status) {
+    public void AcceptCancel(Context context, String driver_id, String request_id, String status,String type) {
         DataManager.getInstance().showProgressMessage((Activity) context, context.getString(R.string.please_wait));
         Map<String, String> map = new HashMap<>();
         map.put("driver_id", DataManager.getInstance().getUserData(context).result.id);
         map.put("request_id", request_id);
         map.put("status", status);
+        map.put("type", type);
         Log.e(TAG, "Request Accept or Cancel Request :" + map);
         Call<BookingDetailModel> call = apiInterface.acceptCancelRequest(map);
         call.enqueue(new Callback<BookingDetailModel>() {
@@ -246,7 +247,7 @@ public class NewRequestDialog {
                     String responseString = new Gson().toJson(response.body());
                     Log.e(TAG, "Request Accept or Cancel Response :" + responseString);
                     if (data.status.equals("1")) {
-                        if (status.equals("Accept")) {
+                        if (status.equals("Accepted")) {
                             context.startActivity(new Intent(context, ArrivingDriverAct.class).putExtra("request_id", request_id));
                             dialog.dismiss();
                             mp.stop();
